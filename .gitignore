@@ -1,0 +1,15 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.env
+backend/investigenius.db
+*.log
+*.tsbuildinfo
+
+# Internal RBC material — data-dictionary photos and hackathon-assignment
+# email screenshots. Never push these; the mock-data generator only uses
+# field names/categories, not the source images.
+Context/

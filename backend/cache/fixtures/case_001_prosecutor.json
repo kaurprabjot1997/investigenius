@@ -1,0 +1,24 @@
+{
+  "content": {
+    "summary": "Twelve separate accounts each transferred amounts just under the $10,000 reporting threshold into ACCT-9000 within a 48-hour window, then the consolidated balance was moved out to an external account the same day. This pattern is consistent with structuring/smurfing followed by rapid layering.",
+    "claims": [
+      {
+        "statement": "ACCT-1001 through ACCT-1012 each sent between $9,200 and $9,800 to ACCT-9000, all just under the $10,000 CTR threshold.",
+        "citation_id": "TXN-0001",
+        "typology": "structuring"
+      },
+      {
+        "statement": "All twelve inbound transfers occurred within a 48-hour window on 2026-07-10 and 2026-07-11.",
+        "citation_id": "TXN-0006",
+        "typology": "structuring"
+      },
+      {
+        "statement": "ACCT-9000 had no prior transaction history before this cluster, then moved the full consolidated balance ($112,400) to an external account within hours of the last inbound transfer.",
+        "citation_id": "TXN-0013",
+        "typology": "layering"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

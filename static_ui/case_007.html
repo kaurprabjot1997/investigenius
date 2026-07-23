@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>case_007 — InvestiGenius</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <span class="brand">InvestiGenius</span>
+  <span class="snapshot-tag">Case detail · Round-tripping</span>
+</header>
+<div class="container">
+<a class="back-link" href="queue.html">&larr; Back to case queue</a>
+<div class="page-header" style="margin-top:12px">
+  <div>
+    <h1 class="page-title">case_007</h1>
+    <p class="page-sub">Round-tripping · risk 79/100 · 5 accounts · 5 alerts merged</p>
+  </div>
+  <a class="back-link" href="audit_case_007.html">View audit trail &rarr;</a>
+</div>
+<div class="graph-card">
+<svg viewBox="0 0 680 380" xmlns="http://www.w3.org/2000/svg"><line x1="194.1" y1="40.0" x2="40.0" y2="181.6" stroke="#cbd5e1" stroke-width="1.5" /><line x1="40.0" y1="181.6" x2="279.3" y2="340.0" stroke="#cbd5e1" stroke-width="1.5" /><line x1="279.3" y1="340.0" x2="640.0" y2="270.7" stroke="#cbd5e1" stroke-width="1.5" /><line x1="640.0" y1="270.7" x2="562.7" y2="75.4" stroke="#cbd5e1" stroke-width="1.5" /><line x1="562.7" y1="75.4" x2="194.1" y2="40.0" stroke="#cbd5e1" stroke-width="1.5" /><circle cx="194.1" cy="40.0" r="5" fill="#64748b" /><text x="202.1" y="43.0" font-size="9" fill="#475569" font-family="ui-monospace,monospace">ACCT-2054</text><circle cx="40.0" cy="181.6" r="5" fill="#64748b" /><text x="48.0" y="184.6" font-size="9" fill="#475569" font-family="ui-monospace,monospace">ACCT-2055</text><circle cx="279.3" cy="340.0" r="5" fill="#64748b" /><text x="287.3" y="343.0" font-size="9" fill="#475569" font-family="ui-monospace,monospace">ACCT-2056</text><circle cx="640.0" cy="270.7" r="5" fill="#64748b" /><text x="648.0" y="273.7" font-size="9" fill="#475569" font-family="ui-monospace,monospace">ACCT-2057</text><circle cx="562.7" cy="75.4" r="5" fill="#64748b" /><text x="570.7" y="78.4" font-size="9" fill="#475569" font-family="ui-monospace,monospace">ACCT-2058</text></svg>
+<div class="legend">
+  <span><i class="dot" style="background:#0ea5e9"></i>Business</span>
+  <span><i class="dot" style="background:#64748b"></i>Personal</span>
+  <span><i class="dot" style="background:#dc2626"></i>External</span>
+  <span><i class="dot" style="background:#b45309"></i>Hub (highest degree)</span>
+</div>
+</div>
+<div class="info-banner">Client profile context below is mock UCP-style data (fabricated by the generator) — shown for investigator context, deliberately excluded from the automated risk score.</div>
+<table class="card-table">
+<thead><tr><th>Account</th><th>Tenure</th><th>Income</th><th>Occupation</th><th>Residence</th><th>Digital</th><th>Products</th></tr></thead>
+<tbody><tr><td class='mono'>ACCT-2054</td><td>9.0y</td><td>$60K-$80K</td><td>Homemaker</td><td>CA</td><td>Enrolled</td><td>6</td></tr><tr><td class='mono'>ACCT-2055</td><td>2.0y</td><td>$20K-$40K</td><td>Retired</td><td>CA</td><td>Enrolled</td><td>3</td></tr><tr><td class='mono'>ACCT-2056</td><td>9.3y</td><td>$20K-$40K</td><td>Homemaker</td><td>CA</td><td>Enrolled</td><td>3</td></tr><tr><td class='mono'>ACCT-2057</td><td>1.5y</td><td>$60K-$80K</td><td>Student</td><td>CA</td><td>Not enrolled</td><td>3</td></tr><tr><td class='mono'>ACCT-2058</td><td>13.3y</td><td>$60K-$80K</td><td>Student</td><td>CA</td><td>Not enrolled</td><td>5</td></tr></tbody>
+</table>
+<div class="section-label">Automated Data Analysis</div>
+<div class="info-banner">No behavioral anomalies detected against client profile data for this case.</div>
+<table class="card-table">
+<thead><tr><th>Txn</th><th>From</th><th>To</th><th>Amount</th><th>Time</th></tr></thead>
+<tbody><tr><td class='mono'>TXN-0063</td><td class='mono'>ACCT-2054</td><td class='mono'>ACCT-2055</td><td>$25166.07</td><td>2026-07-12T09:00:00</td></tr><tr><td class='mono'>TXN-0064</td><td class='mono'>ACCT-2055</td><td class='mono'>ACCT-2056</td><td>$25068.90</td><td>2026-07-12T15:00:00</td></tr><tr><td class='mono'>TXN-0065</td><td class='mono'>ACCT-2056</td><td class='mono'>ACCT-2057</td><td>$25207.66</td><td>2026-07-12T21:00:00</td></tr><tr><td class='mono'>TXN-0066</td><td class='mono'>ACCT-2057</td><td class='mono'>ACCT-2058</td><td>$26356.68</td><td>2026-07-13T03:00:00</td></tr><tr><td class='mono'>TXN-0067</td><td class='mono'>ACCT-2058</td><td class='mono'>ACCT-2054</td><td>$26722.01</td><td>2026-07-13T09:00:00</td></tr></tbody>
+</table>
+<div class="section-label">Standardized Investigation Playbook &mdash; 3/3 criteria matched</div>
+<div class="card-table" style="padding:0"><div class="audit-entry"><div class="top">
+<strong>&#10003; [RT-1] A cyclical fund flow exists — money returns to (or near) its account of origin</strong>
+</div><div class="actor">A closed transaction cycle exists among case accounts.</div></div><div class="audit-entry"><div class="top">
+<strong>&#10003; [RT-2] Each hop in the cycle occurs within a short time window of the previous</strong>
+</div><div class="actor">Full cycle completes within 24.0h.</div></div><div class="audit-entry"><div class="top">
+<strong>&#10003; [RT-3] Transferred amounts are similar in magnitude across hops, with no apparent economic purpose for the intermediate transfers</strong>
+</div><div class="actor">Hop amounts vary by less than 25%.</div></div></div>
+<div class="note-banner">No recorded AI investigation for this case in this snapshot — only case_001 has a pre-recorded fixture.</div>
+</div>
+<footer>Static snapshot generated from live dataset — not connected to a running backend. See TEAM_BRIEFING.md for the full write-up.</footer>
+</body>
+</html>

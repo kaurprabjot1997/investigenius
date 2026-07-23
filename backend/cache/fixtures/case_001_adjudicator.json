@@ -1,0 +1,10 @@
+{
+  "content": {
+    "verdict": "escalate",
+    "confidence": 0.82,
+    "narrative": "DRAFT — for investigator review, not a final determination. Twelve accounts (ACCT-1001 through ACCT-1012) each transferred amounts just under the $10,000 CTR threshold into ACCT-9000 within a 48-hour window (TXN-0001 through TXN-0012), which was then followed by a same-day consolidated outbound transfer of the full balance (TXN-0013). While ACCT-9000's KYC profile identifies a catering business with invoice-referenced transfers, which offers a plausible innocent explanation for individual transaction amounts, the tight 48-hour clustering of twelve near-threshold deposits followed immediately by full-balance outflow is not adequately explained by normal invoice payment timing. This combination is consistent with a structuring-into-layering pattern. Recommend escalation for full investigation, including verification of the underlying invoices against the counterparty accounts.",
+    "citations": ["TXN-0001", "TXN-0006", "TXN-0013"]
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

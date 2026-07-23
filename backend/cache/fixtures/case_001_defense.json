@@ -1,0 +1,19 @@
+{
+  "content": {
+    "summary": "ACCT-9000 is registered to a small business (a catering company per KYC records) and the twelve inbound transfers are labeled with invoice references. Under-$10,000 amounts could plausibly reflect genuine invoice values rather than deliberate structuring, though the clustering in a 48-hour window is unusual for normal invoice payment timing.",
+    "claims": [
+      {
+        "statement": "ACCT-9000's KYC profile lists the account holder as a catering business, and each inbound transfer carries a distinct invoice reference number.",
+        "citation_id": "TXN-0001",
+        "typology": "none"
+      },
+      {
+        "statement": "The account holder's stated average monthly revenue in KYC records is consistent with roughly this transaction volume on a monthly basis, not necessarily suspicious in isolation.",
+        "citation_id": "TXN-0013",
+        "typology": "none"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}
