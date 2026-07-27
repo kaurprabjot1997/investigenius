@@ -1,0 +1,486 @@
+<title>InvestiGenius — Technical Architecture</title>
+<style>
+  :root {
+    --bg: #001636;
+    --bg-2: #002056;
+    --grid: rgba(111, 209, 232, 0.07);
+    --line: #2B4F99;
+    --line-soft: #1D3873;
+    --cyan: #6FD1E8;
+    --white: #EAF2FF;
+    --muted: #7C93C4;
+    --gold: #FFC72C;
+    --rbc-blue: #0033A0;
+    --det: #7BD9A5;
+    --age: #6FD1E8;
+    --gov: #FFC72C;
+    --panel: rgba(0, 22, 58, 0.92);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; overflow-x: hidden;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 26px 26px;
+    color: var(--white);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+  h1, h2, h3 { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-wrap: balance; }
+  button { font-family: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+  .rbc-header {
+    background: var(--rbc-blue);
+    border-bottom: 4px solid var(--gold);
+    padding: 12px 22px;
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  }
+  .rbc-header .rbc-word {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 700; letter-spacing: 0.03em; font-size: 1.05rem; color: #fff;
+  }
+  .rbc-header .rbc-sep { color: rgba(255,255,255,0.45); }
+  .rbc-header .rbc-sub { font-size: 0.76rem; color: rgba(255,255,255,0.9); letter-spacing: 0.02em; }
+
+  .page { max-width: 1180px; margin: 0 auto; padding: 26px 20px 60px; }
+
+  .page-head p { color: var(--muted); font-size: 0.85rem; max-width: 62ch; line-height: 1.6; margin-top: 8px; }
+  .page-head h1 { font-size: clamp(1.2rem, 2.6vw, 1.7rem); color: var(--white); }
+  .page-head .eyebrow {
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan);
+  }
+
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+    margin-top: 20px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px;
+    background: rgba(0, 32, 86, 0.5);
+  }
+  .llm-toggle { display: flex; align-items: center; gap: 10px; font-size: 0.76rem; color: var(--muted); flex-wrap: wrap; }
+  .path-btn {
+    background: transparent; border: 1.5px solid var(--line); color: var(--muted);
+    border-radius: 20px; padding: 5px 12px; font-size: 0.72rem; transition: all 0.15s ease;
+  }
+  .path-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255,199,44,0.08); }
+  #resetBtn {
+    background: transparent; border: 1.5px solid var(--line); color: var(--white);
+    border-radius: 6px; padding: 6px 14px; font-size: 0.76rem;
+  }
+  #resetBtn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .diagram-scroll { overflow-x: auto; margin-top: 22px; padding-bottom: 6px; }
+  .diagram {
+    position: relative; display: flex; gap: 48px; min-width: 980px; padding: 26px 10px;
+  }
+  .diagram-main { flex: 1; display: flex; flex-direction: column; gap: 40px; }
+  .connector-layer { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; }
+
+  .band-label {
+    font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+    text-align: center; margin-bottom: 10px;
+  }
+  .layer-band { position: relative; z-index: 2; }
+  .single-node { display: flex; justify-content: center; }
+  .nodes-row { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+  .logic-columns { display: flex; gap: 44px; justify-content: center; flex-wrap: wrap; }
+  .logic-col { display: flex; flex-direction: column; gap: 10px; min-width: 190px; }
+  .col-label {
+    font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 2px; text-align: center;
+  }
+  .llm-paths { display: flex; gap: 14px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+
+  .gov-column {
+    width: 210px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;
+    padding-top: 40px; position: relative; z-index: 2;
+  }
+
+  .node {
+    background: rgba(0, 32, 86, 0.85); border: 1.5px solid var(--line); border-radius: 5px;
+    padding: 9px 13px; font-size: 0.76rem; color: var(--white); cursor: pointer;
+    transition: opacity 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    text-align: center; user-select: none;
+  }
+  .node .tag {
+    display: block; font-size: 0.6rem; color: var(--muted); margin-top: 3px; letter-spacing: 0.02em;
+  }
+  .node .pill {
+    display: inline-block; margin-left: 5px; font-size: 0.56rem; padding: 1px 6px; border-radius: 10px;
+    border: 1px solid var(--line-soft); color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .node:hover { border-color: var(--cyan); }
+  .node.active { border-color: var(--cyan); background: rgba(0, 32, 86, 1); box-shadow: 0 0 0 2px rgba(111,209,232,0.28), 0 0 18px rgba(111,209,232,0.35); }
+  .node.related { border-color: var(--cyan); }
+  .node.dim { opacity: 0.24; }
+
+  .node.small { padding: 7px 11px; font-size: 0.72rem; }
+  .node.tiny { padding: 6px 10px; font-size: 0.68rem; }
+
+  .node.det { border-left: 3px solid var(--det); }
+  .node.age { border-left: 3px solid var(--age); }
+  .node.gov { border-left: 3px solid var(--gov); }
+
+  .path-node.active-path { border-color: var(--gold); }
+  .path-node.active-path .pill { border-color: var(--gold); color: var(--gold); }
+  .path-node.active-path::after {
+    content: "ACTIVE"; display: block; margin-top: 4px; font-size: 0.56rem; letter-spacing: 0.08em;
+    color: var(--gold);
+  }
+
+  .conn-line { stroke: var(--line); stroke-width: 1.4; fill: none; transition: opacity 0.18s ease, stroke 0.18s ease, stroke-width 0.18s ease; }
+  .conn-line.gov-line { stroke-dasharray: 4 3; stroke: rgba(255, 199, 44, 0.45); }
+  .conn-line.dim { opacity: 0.12; }
+  .conn-line.lit { stroke: var(--cyan); stroke-width: 2.2; opacity: 1; }
+  .conn-line.gov-line.lit { stroke: var(--gold); }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; font-size: 0.68rem; color: var(--muted);
+  }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend .sw { width: 18px; height: 0; border-top: 1.5px solid var(--line); display: inline-block; }
+  .legend .sw.dashed { border-top-style: dashed; border-top-color: rgba(255,199,44,0.6); }
+  .legend .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+  .legend .dot.det { background: var(--det); }
+  .legend .dot.age { background: var(--age); }
+  .legend .dot.gov { background: var(--gov); }
+
+  .detail-panel {
+    background: var(--panel); border: 1.5px solid var(--line); border-radius: 8px;
+    padding: 20px 24px; margin-top: 22px; min-height: 150px;
+  }
+  .detail-empty { color: var(--muted); font-size: 0.82rem; display: flex; align-items: center; height: 108px; }
+  .detail-panel h3 { color: var(--cyan); font-size: 1rem; }
+  .detail-panel .tech-line { color: var(--gold); font-size: 0.74rem; margin-top: 6px; }
+  .detail-panel .what-line {
+    color: var(--white); font-size: 0.85rem; line-height: 1.6; margin-top: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .detail-panel .why-line {
+    border-left: 2px solid var(--gold); padding-left: 12px; margin-top: 12px;
+    color: var(--muted); font-size: 0.82rem; line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .detail-panel .why-line b { color: var(--white); font-weight: 600; }
+  .detail-panel .file-line { margin-top: 14px; font-size: 0.7rem; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; }
+  }
+</style>
+
+<div class="rbc-header">
+  <span class="rbc-word">RBC</span>
+  <span class="rbc-sep">|</span>
+  <span class="rbc-sub">InvestiGenius · Technical Architecture</span>
+</div>
+
+<div class="page">
+  <div class="page-head">
+    <div class="eyebrow">Solution design &amp; GenAI leverage</div>
+    <h1>How InvestiGenius is actually built</h1>
+    <p>Click any component for its implementation detail and the reasoning behind the choice — including what was deliberately not used. Solid lines are the primary data flow; dashed gold lines are cross-cutting governance.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="llm-toggle">
+      <span>LLM path at demo time:</span>
+      <button class="path-btn" data-path="anthropic">Live (Anthropic)</button>
+      <button class="path-btn" data-path="gateway">Enterprise Gateway</button>
+      <button class="path-btn active" data-path="cache">Cached Replay (offline)</button>
+    </div>
+    <button id="resetBtn">Reset view</button>
+  </div>
+
+  <div class="diagram-scroll">
+    <div class="diagram" id="diagram">
+      <svg class="connector-layer" id="connectors"></svg>
+
+      <div class="diagram-main">
+        <div class="layer-band">
+          <div class="band-label">Client</div>
+          <div class="single-node">
+            <div class="node" data-id="spa" tabindex="0" role="button">React SPA<span class="tag">Vite · TS · Tailwind</span></div>
+          </div>
+        </div>
+
+        <div class="layer-band">
+          <div class="band-label">API</div>
+          <div class="single-node">
+            <div class="node" data-id="api" tabindex="0" role="button">REST API<span class="tag">FastAPI, modular monolith</span></div>
+          </div>
+        </div>
+
+        <div class="layer-band">
+          <div class="band-label">Logic</div>
+          <div class="logic-columns">
+            <div class="logic-col">
+              <div class="col-label">Deterministic — no LLM</div>
+              <div class="node small det" data-id="clustering" tabindex="0" role="button">Graph Clustering<span class="tag">NetworkX</span></div>
+              <div class="node small det" data-id="signals" tabindex="0" role="button">Behavioral Signals<span class="tag">rules</span></div>
+              <div class="node small det" data-id="playbook" tabindex="0" role="button">Investigation Playbook<span class="tag">typology criteria</span></div>
+            </div>
+            <div class="logic-col">
+              <div class="col-label">Agentic — LLM-powered</div>
+              <div class="node small age" data-id="prosdef" tabindex="0" role="button">Prosecutor + Defense<span class="tag">parallel</span></div>
+              <div class="node small age" data-id="adjudicator" tabindex="0" role="button">Adjudicator<span class="tag">verdict + citations</span></div>
+              <div class="node small age" data-id="chat" tabindex="0" role="button">Precedent Chat<span class="tag">single-turn</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer-band">
+          <div class="band-label">LLM abstraction</div>
+          <div class="single-node">
+            <div class="node" data-id="llmclient" tabindex="0" role="button">LLMClient<span class="tag">provider-agnostic</span></div>
+          </div>
+          <div class="llm-paths">
+            <div class="node tiny path-node" data-id="anthropic" data-path="anthropic" tabindex="0" role="button">Anthropic<span class="pill">live</span></div>
+            <div class="node tiny path-node" data-id="gateway" data-path="gateway" tabindex="0" role="button">Enterprise Gateway<span class="pill">stub</span></div>
+            <div class="node tiny path-node active-path" data-id="cache" data-path="cache" tabindex="0" role="button">Cached Replay<span class="pill">offline</span></div>
+          </div>
+        </div>
+
+        <div class="layer-band">
+          <div class="band-label">Data</div>
+          <div class="nodes-row">
+            <div class="node" data-id="sqlite" tabindex="0" role="button">SQLite<span class="tag">7 tables</span></div>
+            <div class="node" data-id="knowledge" tabindex="0" role="button">Knowledge Base<span class="tag">TF-IDF search</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gov-column">
+        <div class="col-label">Cross-cutting governance</div>
+        <div class="node small gov" data-id="rbac" tabindex="0" role="button">RBAC<span class="tag">server-enforced</span></div>
+        <div class="node small gov" data-id="pii" tabindex="0" role="button">PII Masking<span class="tag">regex</span></div>
+        <div class="node small gov" data-id="citation" tabindex="0" role="button">Citation Validator<span class="tag">confidence gating</span></div>
+        <div class="node small gov" data-id="audit" tabindex="0" role="button">Audit Log<span class="tag">hash-chained</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><i class="sw"></i> primary data flow</span>
+    <span><i class="sw dashed"></i> cross-cutting governance</span>
+    <span><i class="dot det"></i> deterministic (no LLM)</span>
+    <span><i class="dot age"></i> agentic (LLM-powered)</span>
+    <span><i class="dot gov"></i> governance &amp; security</span>
+  </div>
+
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-empty">Click any component above to see how it's built and why.</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var DETAILS = {
+    spa: { title: "React SPA", tech: "React + Vite + TypeScript + Tailwind CSS",
+      what: "Case Queue, Alerts Queue, Case Detail (network graph, signals, playbook, investigation panel, precedent chat), and a persona sign-in screen.",
+      why: "No router library — view switching is a few lines of state in App.tsx. No component library, no state-management library. Six views doesn't justify that overhead.",
+      file: "frontend/src/App.tsx" },
+    api: { title: "REST API", tech: "FastAPI, modular monolith",
+      what: "/cases, /cases/{id}, /cases/{id}/investigate, /cases/{id}/approve, /cases/{id}/audit, /cases/{id}/chat, /alerts.",
+      why: "One deployable, not microservices. No network hops between services and no extra infrastructure to stand up or explain to IT for a one-week build.",
+      file: "backend/app/api/routes.py" },
+    clustering: { title: "Graph Clustering", tech: "NetworkX, weakly-connected components",
+      what: "Groups raw alerts into network cases by shared accounts; detects structuring, round-tripping, and mule-hub typologies.",
+      why: "Not Louvain, not a graph database like Neo4j. The real need is <b>“which accounts are linked,”</b> which connected components answers directly — simpler, deterministic, zero extra infrastructure.",
+      file: "backend/app/graph/clustering.py" },
+    signals: { title: "Behavioral Signals", tech: "Deterministic rules, computed before any LLM call",
+      what: "Income-vs-transaction-volume mismatch, new-account-high-volume flags.",
+      why: "Built only on financial-capacity fields (income, tenure) by governance rule — demographic and segmentation fields are shown to investigators but never feed automated scoring.",
+      file: "backend/app/graph/signals.py" },
+    playbook: { title: "Investigation Playbook", tech: "Typology-keyed criteria checklist",
+      what: "The same published criteria list applied to every case of a given typology — standardization, not ad hoc judgment.",
+      why: "Reuses NetworkX's own cycle detection instead of a second hand-rolled implementation — an earlier hand-rolled version had a bug that disagreed with the clustering module's own classification.",
+      file: "backend/data/playbooks.py" },
+    prosdef: { title: "Prosecutor + Defense", tech: "Parallel LLM calls (asyncio.gather), forced tool-use JSON",
+      what: "Prosecutor argues for suspicion, Defense argues the innocent explanation — same case data, opposite briefs, run concurrently.",
+      why: "An adversarial pair instead of one model producing a single score — surfaces the counter-argument a real investigator has to weigh anyway, before any verdict.",
+      file: "backend/app/agents/pipeline.py" },
+    adjudicator: { title: "Adjudicator", tech: "Forced tool-use JSON — verdict, confidence, citations, narrative",
+      what: "Weighs both arguments and rules escalate / needs_review / close, with a confidence score.",
+      why: "Never free-text parsing. Structured output only, so every claim can be checked in code rather than trusted from prose.",
+      file: "backend/app/agents/pipeline.py" },
+    chat: { title: "Precedent Chat", tech: "Single-turn LLM call, forced tool-use JSON",
+      what: "Answers “have we seen this before” by searching OTHER cases' recorded findings — never this case's own evidence.",
+      why: "Single-turn by design, no conversation history — keeps the fixture-recording surface bounded and avoids multi-turn chat complexity this use case doesn't need.",
+      file: "backend/app/agents/chat.py" },
+    llmclient: { title: "LLMClient", tech: "Provider-agnostic abstract interface",
+      what: "Three interchangeable implementations behind one interface — Anthropic, Enterprise Gateway, and Cached Replay, shown below.",
+      why: "The single biggest architectural decision in this project. Built because the bank laptop used for the actual demo has uncertain live LLM access — every downstream design assumes this abstraction exists.",
+      file: "backend/app/llm/client.py" },
+    anthropic: { title: "Anthropic — live path", tech: "Direct API calls, validated + retried",
+      what: "Up to 3 attempts, checked against required schema fields before accepting a response. Every live response is auto-saved as a fixture.",
+      why: "A model occasionally returns structured output missing a required field — validation-with-retry catches that instead of silently caching a broken response.",
+      file: "backend/app/llm/client.py" },
+    gateway: { title: "Enterprise Gateway — stub path", tech: "Same LLMClient interface, unimplemented body",
+      what: "A placeholder for a future bank-hosted model gateway, if one becomes available before demo day.",
+      why: "Costs nothing to have ready. If IT confirms gateway access, switching providers is a one-line env var change — no code changes required anywhere else.",
+      file: "backend/app/llm/client.py" },
+    cache: { title: "Cached Replay — offline path", tech: "Replays recorded fixtures, zero network calls",
+      what: "Every fixture was recorded from a real Anthropic call during development. In this mode the entire app runs identically with no internet access.",
+      why: "This is what actually runs at demo time if the venue network can't be trusted — same UI, same verdicts, same citations, no live API dependency.",
+      file: "backend/app/llm/cache.py" },
+    sqlite: { title: "SQLite", tech: "Single-file relational database",
+      what: "accounts, transactions, alerts, cases, case_accounts, case_alerts, client_profiles.",
+      why: "Not PostgreSQL — no database server to install or explain to IT on a locked-down laptop. Regenerated deterministically from a fixed random seed on every fresh clone.",
+      file: "backend/app/db.py" },
+    knowledge: { title: "Knowledge Base", tech: "Local TF-IDF + numpy cosine similarity, same-typology boost",
+      what: "Every investigation and every human decision writes a searchable entry here; Precedent Chat searches it.",
+      why: "Not a vector database or an embeddings API — no per-query API cost, no external dependency, works fully offline. Deliberately <b>not</b> hash-chained like the audit log — this needs to stay searchable and mutable, not tamper-evident.",
+      file: "backend/app/knowledge.py" },
+    rbac: { title: "RBAC", tech: "X-Demo-Role header, enforced server-side",
+      what: "junior_investigator / senior_investigator / compliance_officer — checked on every request via _require_role().",
+      why: "The sign-in persona picker on the frontend is cosmetic. Enforcement lives on the server and can't be bypassed by editing the UI — a deliberate demo simplification (no full session/auth system), not a hidden gap.",
+      file: "backend/app/api/routes.py" },
+    pii: { title: "PII Masking", tech: "Regex-based tokenization",
+      what: "Masks PII before any text reaches an LLM call, regardless of provider — unmasked again for display.",
+      why: "Not Presidio or an ML-based detector — a hackathon-scope regex layer that's auditable line by line, applied unconditionally rather than trusted to a black box.",
+      file: "backend/app/security/pii.py" },
+    citation: { title: "Citation Validator", tech: "Deterministic post-hoc check against real record IDs",
+      what: "Every claim must cite a transaction, account, or profile ID that actually exists in this case's data.",
+      why: "If a citation can't be verified, or confidence falls under threshold, the case is auto-flagged needs_review — it cannot be auto-closed or auto-escalated on an unverifiable claim.",
+      file: "backend/app/agents/pipeline.py" },
+    audit: { title: "Hash-Chained Audit Log", tech: "SHA-256 chaining — each entry's hash includes the previous entry's hash",
+      what: "Every investigation and every human approve/reject decision is recorded here, tamper-evident by construction.",
+      why: "A deliberately separate table from the knowledge base — an audit record needs tamper-evidence; a search index doesn't, and conflating the two would slow down search to satisfy a guarantee it doesn't need.",
+      file: "backend/app/security/audit.py" }
+  };
+
+  var CONNECTIONS = [
+    ["spa", "api", "flow"],
+    ["api", "clustering", "flow"], ["api", "signals", "flow"], ["api", "playbook", "flow"],
+    ["api", "prosdef", "flow"], ["api", "chat", "flow"],
+    ["prosdef", "adjudicator", "flow"],
+    ["clustering", "sqlite", "flow"], ["signals", "sqlite", "flow"], ["playbook", "sqlite", "flow"],
+    ["prosdef", "llmclient", "flow"], ["adjudicator", "llmclient", "flow"], ["chat", "llmclient", "flow"],
+    ["llmclient", "anthropic", "flow"], ["llmclient", "gateway", "flow"], ["llmclient", "cache", "flow"],
+    ["adjudicator", "knowledge", "flow"], ["chat", "knowledge", "flow"],
+    ["rbac", "api", "gov"],
+    ["pii", "prosdef", "gov"], ["pii", "adjudicator", "gov"], ["pii", "chat", "gov"],
+    ["citation", "adjudicator", "gov"],
+    ["audit", "api", "gov"]
+  ];
+
+  var diagram = document.getElementById("diagram");
+  var svg = document.getElementById("connectors");
+  var detailPanel = document.getElementById("detailPanel");
+
+  function relRect(el) {
+    var r = el.getBoundingClientRect();
+    var c = diagram.getBoundingClientRect();
+    return { left: r.left - c.left + diagram.scrollLeft, top: r.top - c.top + diagram.scrollTop, width: r.width, height: r.height };
+  }
+
+  function connectPoints(a, b) {
+    var acx = a.left + a.width / 2, acy = a.top + a.height / 2;
+    var bcx = b.left + b.width / 2, bcy = b.top + b.height / 2;
+    var dx = bcx - acx, dy = bcy - acy;
+    if (Math.abs(dy) >= Math.abs(dx)) {
+      return dy >= 0 ? [acx, a.top + a.height, bcx, b.top] : [acx, a.top, bcx, b.top + b.height];
+    }
+    return dx >= 0 ? [a.left + a.width, acy, b.left, bcy] : [a.left, acy, b.left + b.width, bcy];
+  }
+
+  function drawConnectors() {
+    var w = diagram.scrollWidth, h = diagram.scrollHeight;
+    svg.setAttribute("width", w);
+    svg.setAttribute("height", h);
+    svg.innerHTML =
+      '<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+      '<path d="M0,0 L10,5 L0,10 z" fill="' + getComputedStyle(document.documentElement).getPropertyValue("--line") + '"/></marker></defs>';
+    CONNECTIONS.forEach(function (c) {
+      var a = document.querySelector('[data-id="' + c[0] + '"]');
+      var b = document.querySelector('[data-id="' + c[1] + '"]');
+      if (!a || !b) return;
+      var pts = connectPoints(relRect(a), relRect(b));
+      var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", pts[0]); line.setAttribute("y1", pts[1]);
+      line.setAttribute("x2", pts[2]); line.setAttribute("y2", pts[3]);
+      line.setAttribute("class", "conn-line" + (c[2] === "gov" ? " gov-line" : ""));
+      line.setAttribute("data-a", c[0]); line.setAttribute("data-b", c[1]);
+      if (c[2] === "flow") line.setAttribute("marker-end", "url(#arrow)");
+      svg.appendChild(line);
+    });
+  }
+
+  function renderDetail(id) {
+    var d = DETAILS[id];
+    if (!d) { resetPanel(); return; }
+    detailPanel.innerHTML =
+      '<h3>' + d.title + '</h3>' +
+      '<div class="tech-line">' + d.tech + '</div>' +
+      '<div class="what-line">' + d.what + '</div>' +
+      '<div class="why-line">' + d.why + '</div>' +
+      '<div class="file-line">' + d.file + '</div>';
+  }
+
+  function resetPanel() {
+    detailPanel.innerHTML = '<div class="detail-empty">Click any component above to see how it’s built and why.</div>';
+  }
+
+  function selectNode(id) {
+    var related = {}; related[id] = true;
+    var relConns = [];
+    CONNECTIONS.forEach(function (c) {
+      if (c[0] === id || c[1] === id) { related[c[0]] = true; related[c[1]] = true; relConns.push(c); }
+    });
+    document.querySelectorAll(".node").forEach(function (n) {
+      var nid = n.getAttribute("data-id");
+      n.classList.toggle("active", nid === id);
+      n.classList.toggle("related", !!related[nid] && nid !== id);
+      n.classList.toggle("dim", !related[nid]);
+    });
+    document.querySelectorAll(".conn-line").forEach(function (l) {
+      var a = l.getAttribute("data-a"), b = l.getAttribute("data-b");
+      var lit = relConns.some(function (c) { return c[0] === a && c[1] === b; });
+      l.classList.toggle("lit", lit);
+      l.classList.toggle("dim", !lit);
+    });
+    renderDetail(id);
+  }
+
+  function resetView() {
+    document.querySelectorAll(".node").forEach(function (n) { n.classList.remove("active", "related", "dim"); });
+    document.querySelectorAll(".conn-line").forEach(function (l) { l.classList.remove("lit", "dim"); });
+    resetPanel();
+  }
+
+  diagram.addEventListener("click", function (e) {
+    var node = e.target.closest(".node");
+    if (node) selectNode(node.getAttribute("data-id"));
+    else resetView();
+  });
+  diagram.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    var node = e.target.closest(".node");
+    if (node) { e.preventDefault(); selectNode(node.getAttribute("data-id")); }
+  });
+  document.getElementById("resetBtn").addEventListener("click", resetView);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") resetView(); });
+
+  document.querySelectorAll(".path-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".path-btn").forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      var path = btn.getAttribute("data-path");
+      document.querySelectorAll(".path-node").forEach(function (n) {
+        n.classList.toggle("active-path", n.getAttribute("data-path") === path);
+      });
+    });
+  });
+
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawConnectors, 120);
+  });
+  window.addEventListener("load", drawConnectors);
+  drawConnectors();
+  setTimeout(drawConnectors, 200);
+})();
+</script>
