@@ -16,6 +16,8 @@
     --good: #3C6E4F;
     --skin: #E3B78B;
     --shadow: rgba(34, 30, 25, 0.22);
+    --rbc-blue: #0033A0;
+    --rbc-gold: #FFC72C;
   }
 
   * { box-sizing: border-box; }
@@ -29,23 +31,28 @@
   button { font-family: inherit; cursor: pointer; }
   :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
+  .rbc-header {
+    background: var(--rbc-blue);
+    border-bottom: 4px solid var(--rbc-gold);
+    padding: 12px 22px;
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  }
+  .rbc-header .rbc-word {
+    font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+    letter-spacing: 0.03em; font-size: 1.05rem; color: #fff;
+  }
+  .rbc-header .rbc-sep { color: rgba(255,255,255,0.45); }
+  .rbc-header .rbc-sub {
+    font-family: ui-monospace, monospace; font-size: 0.76rem;
+    color: rgba(255,255,255,0.9); letter-spacing: 0.02em;
+  }
+
   .wrap {
     max-width: 1080px;
     margin: clamp(16px, 4vw, 48px) auto;
     padding: 0 16px 32px;
   }
 
-  .masthead {
-    text-align: center;
-    margin-bottom: 14px;
-  }
-  .masthead .kicker {
-    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
   /* ---------- folder tabs ---------- */
   .tabs {
     display: flex;
@@ -308,6 +315,21 @@
   .ripple-node.center text { fill: var(--ink); font-weight: 700; }
   .ripple-node { opacity: 0; animation: fadeUp 0.5s ease forwards; }
 
+  .value-badge {
+    position: absolute; text-align: center;
+    background: var(--card-bg); border: 1.5px solid var(--gold-deep); border-radius: 8px;
+    padding: 7px 13px; opacity: 0;
+  }
+  .js-anim.value-badge { animation: fadeUp 0.5s ease forwards; animation-delay: .9s; }
+  .value-badge .value-num {
+    font-family: ui-monospace, monospace; font-weight: 700; font-size: 1.1rem;
+    color: var(--gold-deep); font-variant-numeric: tabular-nums;
+  }
+  .value-badge .value-sub {
+    font-family: ui-monospace, monospace; font-size: 0.56rem; color: var(--muted);
+    margin-top: 2px; line-height: 1.4;
+  }
+
   /* ---------- computation beats (shared by cluster + argument chapters) ---------- */
   .compute-label {
     position: absolute;
@@ -412,11 +434,13 @@
   }
 </style>
 
-<div class="wrap">
-  <div class="masthead">
-    <div class="kicker">RBC · Women in T&amp;O Hackathon 2026</div>
-  </div>
+<div class="rbc-header">
+  <span class="rbc-word">RBC</span>
+  <span class="rbc-sep">|</span>
+  <span class="rbc-sub">InvestiGenius · Women in T&amp;O Hackathon 2026</span>
+</div>
 
+<div class="wrap">
   <div class="tabs" id="tabs" role="tablist" aria-label="Story chapters"></div>
 
   <div class="stage-frame">
@@ -532,6 +556,10 @@
 
       <section class="panel" data-idx="6" aria-hidden="true">
         <div class="stamp">BEYOND THIS CASE</div>
+        <div class="value-badge js-anim" style="top:5%; right:4%;">
+          <div class="value-num">~26 hrs</div>
+          <div class="value-sub">investigator time back, this batch<br>103 alerts × ~15 min avoided</div>
+        </div>
         <div class="ripple-wrap">
           <svg viewBox="0 0 460 240" aria-hidden="true">
             <line class="ripple-spoke js-anim" x1="230" y1="120" x2="80" y2="40" style="animation-delay:.1s"/>
