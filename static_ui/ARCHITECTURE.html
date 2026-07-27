@@ -186,8 +186,7 @@
   <div class="toolbar">
     <div class="llm-toggle">
       <span>LLM path at demo time:</span>
-      <button class="path-btn" data-path="anthropic">Live (Anthropic)</button>
-      <button class="path-btn" data-path="gateway">Enterprise Gateway</button>
+      <button class="path-btn" data-path="gateway">Enterprise Gateway (OAuth)</button>
       <button class="path-btn active" data-path="cache">Cached Replay (offline)</button>
     </div>
     <button id="resetBtn">Reset view</button>
@@ -236,8 +235,7 @@
             <div class="node" data-id="llmclient" tabindex="0" role="button">LLMClient<span class="tag">provider-agnostic</span></div>
           </div>
           <div class="llm-paths">
-            <div class="node tiny path-node" data-id="anthropic" data-path="anthropic" tabindex="0" role="button">Anthropic<span class="pill">live</span></div>
-            <div class="node tiny path-node" data-id="gateway" data-path="gateway" tabindex="0" role="button">Enterprise Gateway<span class="pill">stub</span></div>
+            <div class="node tiny path-node" data-id="gateway" data-path="gateway" tabindex="0" role="button">Enterprise Gateway<span class="pill">OAuth</span></div>
             <div class="node tiny path-node active-path" data-id="cache" data-path="cache" tabindex="0" role="button">Cached Replay<span class="pill">offline</span></div>
           </div>
         </div>
@@ -310,20 +308,16 @@
       why: "Single-turn by design, no conversation history — keeps the fixture-recording surface bounded and avoids multi-turn chat complexity this use case doesn't need.",
       file: "backend/app/agents/chat.py" },
     llmclient: { title: "LLMClient", tech: "Provider-agnostic abstract interface",
-      what: "Three interchangeable implementations behind one interface — Anthropic, Enterprise Gateway, and Cached Replay, shown below.",
-      why: "The single biggest architectural decision in this project. Built because the bank laptop used for the actual demo has uncertain live LLM access — every downstream design assumes this abstraction exists.",
+      what: "Two interchangeable implementations behind one interface — Enterprise Gateway and Cached Replay, shown below.",
+      why: "The single biggest architectural decision in this project. No implementation ever calls a model provider directly — every downstream design assumes this abstraction exists, and access is governed centrally rather than by individual API keys.",
       file: "backend/app/llm/client.py" },
-    anthropic: { title: "Anthropic — live path", tech: "Direct API calls, validated + retried",
-      what: "Up to 3 attempts, checked against required schema fields before accepting a response. Every live response is auto-saved as a fixture.",
-      why: "A model occasionally returns structured output missing a required field — validation-with-retry catches that instead of silently caching a broken response.",
-      file: "backend/app/llm/client.py" },
-    gateway: { title: "Enterprise Gateway — stub path", tech: "Same LLMClient interface, unimplemented body",
-      what: "A placeholder for a future bank-hosted model gateway, if one becomes available before demo day.",
-      why: "Costs nothing to have ready. If IT confirms gateway access, switching providers is a one-line env var change — no code changes required anywhere else.",
+    gateway: { title: "Enterprise Gateway", tech: "OAuth client-credentials flow to the bank's model gateway",
+      what: "The production integration point — authenticates with the bank's own OAuth credentials, not a personal API key. No secrets live in application code or config.",
+      why: "The only way this can run inside a bank's environment for real: model access goes through infrastructure the bank already governs and can revoke centrally, same as any other internal service-to-service call.",
       file: "backend/app/llm/client.py" },
     cache: { title: "Cached Replay — offline path", tech: "Replays recorded fixtures, zero network calls",
-      what: "Every fixture was recorded from a real Anthropic call during development. In this mode the entire app runs identically with no internet access.",
-      why: "This is what actually runs at demo time if the venue network can't be trusted — same UI, same verdicts, same citations, no live API dependency.",
+      what: "Every fixture was recorded from a real model call during earlier development. In this mode the entire app runs identically with no internet access and no credentials at all.",
+      why: "This is what actually runs at demo time if the venue network — or gateway access — can't be relied on: same UI, same verdicts, same citations, no live dependency of any kind.",
       file: "backend/app/llm/cache.py" },
     sqlite: { title: "SQLite", tech: "Single-file relational database",
       what: "accounts, transactions, alerts, cases, case_accounts, case_alerts, client_profiles.",
@@ -358,7 +352,7 @@
     ["prosdef", "adjudicator", "flow"],
     ["clustering", "sqlite", "flow"], ["signals", "sqlite", "flow"], ["playbook", "sqlite", "flow"],
     ["prosdef", "llmclient", "flow"], ["adjudicator", "llmclient", "flow"], ["chat", "llmclient", "flow"],
-    ["llmclient", "anthropic", "flow"], ["llmclient", "gateway", "flow"], ["llmclient", "cache", "flow"],
+    ["llmclient", "gateway", "flow"], ["llmclient", "cache", "flow"],
     ["adjudicator", "knowledge", "flow"], ["chat", "knowledge", "flow"],
     ["rbac", "api", "gov"],
     ["pii", "prosdef", "gov"], ["pii", "adjudicator", "gov"], ["pii", "chat", "gov"],
