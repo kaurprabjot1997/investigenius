@@ -1,0 +1,724 @@
+<title>InvestiGenius — A Case File (Story Mode)</title>
+<style>
+  :root {
+    --paper: #EDE6D6;
+    --paper-deep: #DFD4B9;
+    --paper-line: #C7B98F;
+    --card-bg: #FBF8EF;
+    --ink: #221E19;
+    --ink-soft: #4A443B;
+    --muted: #7C7460;
+    --gold: #AD7B2A;
+    --gold-deep: #8A6220;
+    --prosecutor: #96382F;
+    --defense: #2F5A73;
+    --adjudicator: #AD7B2A;
+    --good: #3C6E4F;
+    --skin: #E3B78B;
+    --shadow: rgba(34, 30, 25, 0.22);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; overflow-x: hidden;
+    background: radial-gradient(ellipse at 50% 20%, #E7DCC2 0%, #CFC09A 100%);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  h1, h2 { font-family: Georgia, "Times New Roman", serif; text-wrap: balance; margin: 0; }
+  button { font-family: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .wrap {
+    max-width: 1080px;
+    margin: clamp(16px, 4vw, 48px) auto;
+    padding: 0 16px 32px;
+  }
+
+  .masthead {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .masthead .kicker {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  /* ---------- folder tabs ---------- */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 0 6px;
+    scrollbar-width: thin;
+  }
+  .tab {
+    flex: 1 0 auto;
+    border: 2px solid var(--ink);
+    border-bottom: none;
+    background: var(--paper-deep);
+    color: var(--ink-soft);
+    padding: 8px 10px 7px;
+    border-radius: 9px 9px 0 0;
+    font-family: ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: translateY(3px);
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  .tab .num { color: var(--gold-deep); margin-right: 5px; }
+  .tab[aria-current="true"] {
+    background: var(--card-bg);
+    color: var(--ink);
+    transform: translateY(0);
+    border-bottom: 2px solid var(--card-bg);
+    box-shadow: 0 -2px 0 var(--gold) inset;
+  }
+
+  /* ---------- stage ---------- */
+  .stage-frame {
+    position: relative;
+    border: 2px solid var(--ink);
+    background: var(--card-bg);
+    box-shadow: 7px 7px 0 var(--paper-line), 0 18px 32px var(--shadow);
+  }
+  .stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background:
+      repeating-linear-gradient(0deg, rgba(34,30,25,0.025) 0px, rgba(34,30,25,0.025) 1px, transparent 1px, transparent 26px);
+  }
+  .panel {
+    position: absolute; inset: 0;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .panel[aria-hidden="false"] { opacity: 1; pointer-events: auto; }
+
+  .stamp {
+    position: absolute; top: 4.5%; left: 4%;
+    font-family: ui-monospace, monospace;
+    font-size: clamp(0.62rem, 1.3vw, 0.82rem);
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    background: var(--paper);
+    border: 1.5px solid var(--ink-soft);
+    padding: 3px 9px;
+    transform: rotate(-1.5deg);
+  }
+  .beat-line {
+    position: absolute; bottom: 5%; left: 50%;
+    transform: translateX(-50%);
+    width: 88%;
+    text-align: center;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(0.85rem, 2vw, 1.15rem);
+    color: var(--ink);
+  }
+
+  /* ---------- characters ---------- */
+  .char { position: absolute; width: 92px; height: 150px; }
+  .char .head {
+    position: absolute; top: 0; left: 24px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--skin);
+    box-shadow: inset -5px -6px 0 rgba(0,0,0,0.08);
+  }
+  .char .head::after {
+    content: ""; position: absolute; top: 15px; left: 10px; width: 6px; height: 6px;
+    border-radius: 50%; background: rgba(34,30,25,0.55); box-shadow: 16px 0 0 rgba(34,30,25,0.55);
+  }
+  .char .body {
+    position: absolute; top: 38px; left: 1px;
+    width: 90px; height: 88px;
+    border-radius: 30px 30px 16px 16px;
+  }
+  .char.investigator .body { background: var(--ink-soft); }
+  .char.prosecutor .body { background: var(--prosecutor); }
+  .char.defense .body { background: var(--defense); }
+  .char.adjudicator .body { background: var(--adjudicator); }
+  .char .label {
+    position: absolute; top: 150px; left: 50%; transform: translateX(-50%);
+    font-family: ui-monospace, monospace; font-size: 0.62rem; letter-spacing: 0.05em;
+    color: var(--ink-soft); white-space: nowrap; text-transform: uppercase;
+  }
+
+  .prop-headset {
+    position: absolute; top: -6px; left: 20px; width: 50px; height: 26px;
+    border: 4px solid var(--ink); border-bottom: none; border-radius: 25px 25px 0 0;
+  }
+  .prop-headset::after {
+    content: ""; position: absolute; right: -3px; top: 16px; width: 7px; height: 7px;
+    border-radius: 50%; background: var(--ink);
+  }
+  .prop-briefcase {
+    position: absolute; bottom: -6px; left: -20px; width: 36px; height: 24px;
+    border: 3px solid var(--ink); border-radius: 4px; background: var(--card-bg);
+  }
+  .prop-briefcase::before {
+    content: ""; position: absolute; top: -9px; left: 10px; width: 14px; height: 8px;
+    border: 3px solid var(--ink); border-bottom: none; border-radius: 4px 4px 0 0;
+  }
+  .prop-folder {
+    position: absolute; bottom: -4px; right: -22px; width: 34px; height: 26px;
+    background: var(--card-bg); border: 3px solid var(--ink); border-radius: 2px 6px 4px 4px;
+    transform: rotate(8deg);
+  }
+  .prop-scale { position: absolute; bottom: -10px; left: 22px; width: 48px; height: 34px; }
+
+  /* ---------- cards (alerts) ---------- */
+  .card {
+    position: absolute; width: 34px; height: 22px;
+    background: var(--card-bg); border: 1.5px solid var(--ink);
+    border-radius: 3px; box-shadow: 2px 2px 0 var(--shadow);
+  }
+  .card::before {
+    content: ""; position: absolute; left: 5px; right: 5px; top: 6px; height: 2px; background: var(--paper-line);
+    box-shadow: 0 5px 0 var(--paper-line);
+  }
+  .card-fall { opacity: 0; animation: cardFall 0.65s ease-out forwards; }
+  @keyframes cardFall {
+    from { transform: translateY(-220%) rotate(var(--rot)); opacity: 0; }
+    to   { transform: translateY(0) rotate(var(--rot)); opacity: 1; }
+  }
+  .card-merge { opacity: 0.95; animation: cardMerge 1.15s ease-in forwards; }
+  @keyframes cardMerge {
+    0%   { transform: translate(0,0) rotate(var(--rot)) scale(1); opacity: 0.95; }
+    65%  { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.85); opacity: 0.6; }
+    100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.3); opacity: 0.1; }
+  }
+  .card-stay { opacity: 0.95; animation: cardStay 1.15s ease-in forwards; }
+  @keyframes cardStay {
+    0%   { transform: translate(0,0) scale(1); }
+    65%  { transform: translate(var(--tx), var(--ty)) scale(1.1); }
+    100% { transform: translate(var(--tx), var(--ty)) scale(1); box-shadow: 0 0 0 3px rgba(173,123,42,0.4), 2px 2px 0 var(--shadow); }
+  }
+
+  /* ---------- stat readout ---------- */
+  .stat-readout {
+    position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center; z-index: 5;
+  }
+  .stat-readout .num {
+    font-family: ui-monospace, monospace; font-weight: 700;
+    font-size: clamp(2.2rem, 7vw, 3.6rem); color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-readout .sub {
+    font-family: ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.08em;
+    color: var(--muted); text-transform: uppercase; margin-top: 2px;
+  }
+  .stat-flag {
+    margin-top: 10px; display: inline-block; font-family: ui-monospace, monospace;
+    font-size: 0.72rem; letter-spacing: 0.05em; color: var(--gold-deep);
+    border: 1.5px solid var(--gold); padding: 3px 10px; border-radius: 20px;
+    opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 1.6s;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- graph (svg) ---------- */
+  .graph-wrap { position: absolute; inset: 10% 6% 16%; display: flex; align-items: center; justify-content: center; }
+  .graph-wrap svg { width: 100%; height: 100%; max-width: 480px; }
+  .graph-node circle { fill: var(--card-bg); stroke: var(--ink); stroke-width: 2; }
+  .graph-node.hub circle { fill: var(--gold); }
+  .graph-node text {
+    font-family: ui-monospace, monospace; font-size: 9px; fill: var(--ink-soft);
+    text-anchor: middle;
+  }
+  .graph-edge { fill: none; stroke: var(--ink-soft); stroke-width: 2; stroke-dasharray: 620; stroke-dashoffset: 620; }
+  .js-anim.graph-edge { animation: drawEdge 0.85s ease forwards; }
+  @keyframes drawEdge { to { stroke-dashoffset: 0; } }
+  .graph-node { opacity: 0; animation: fadeUp 0.5s ease forwards; }
+
+  /* ---------- speech bubbles ---------- */
+  .bubble {
+    position: absolute; max-width: 230px;
+    background: var(--card-bg); border: 2px solid var(--ink);
+    border-radius: 14px; padding: 10px 13px;
+    opacity: 0; transform: scale(0.7) translateY(10px);
+    box-shadow: 3px 3px 0 var(--shadow);
+  }
+  .js-anim.bubble { animation: bubblePop 0.5s cubic-bezier(.34,1.56,.64,1) forwards; }
+  @keyframes bubblePop { to { opacity: 1; transform: scale(1) translateY(0); } }
+  .bubble::after {
+    content: ""; position: absolute; bottom: -10px; width: 16px; height: 16px;
+    background: var(--card-bg); border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+    transform: rotate(45deg);
+  }
+  .bubble.left::after { left: 30px; }
+  .bubble.right::after { right: 30px; }
+  .bubble.center::after { left: 50%; margin-left: -8px; }
+  .bubble .role {
+    font-family: ui-monospace, monospace; font-size: 0.62rem; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: 700; margin-bottom: 3px; display: block;
+  }
+  .bubble.prosecutor .role { color: var(--prosecutor); }
+  .bubble.defense .role { color: var(--defense); }
+  .bubble.adjudicator .role { color: var(--gold-deep); }
+  .bubble p { margin: 0; font-size: 0.82rem; line-height: 1.35; color: var(--ink); }
+  .chip {
+    display: inline-block; margin-top: 6px; font-family: ui-monospace, monospace;
+    font-size: 0.62rem; background: var(--paper); border: 1px solid var(--paper-line);
+    padding: 1px 6px; border-radius: 4px; color: var(--ink-soft);
+  }
+
+  /* ---------- sign-off / chain ---------- */
+  .stamp-btn {
+    position: absolute; font-family: ui-monospace, monospace; font-size: 0.78rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--good);
+    border: 2.5px solid var(--good); border-radius: 8px; padding: 6px 14px;
+    transform: rotate(-6deg) scale(0.6); opacity: 0;
+    animation: stampDown 0.4s ease forwards; animation-delay: 0.5s;
+  }
+  @keyframes stampDown { to { transform: rotate(-6deg) scale(1); opacity: 1; } }
+  .chain { position: absolute; display: flex; align-items: center; }
+  .chain .link {
+    width: 22px; height: 30px; border: 4px solid var(--ink); border-radius: 50%;
+    margin-left: -8px; background: transparent;
+    opacity: 0; transform: scale(0.4) rotate(-30deg);
+  }
+  .js-anim.link { animation: linkSnap 0.35s ease forwards; }
+  @keyframes linkSnap { 70% { transform: scale(1.15) rotate(6deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+  .lock {
+    width: 26px; height: 22px; background: var(--ink); border-radius: 4px; position: relative;
+    opacity: 0; transform: scale(0.5);
+  }
+  .lock::before {
+    content: ""; position: absolute; top: -14px; left: 5px; width: 16px; height: 16px;
+    border: 4px solid var(--ink); border-bottom: none; border-radius: 10px 10px 0 0;
+  }
+  .js-anim.lock { animation: lockDrop 0.4s cubic-bezier(.34,1.56,.64,1) forwards; }
+  @keyframes lockDrop { to { opacity: 1; transform: scale(1); } }
+
+  /* ---------- ripple (ecosystem) ---------- */
+  .ripple-wrap { position: absolute; inset: 8% 4% 14%; }
+  .ripple-wrap svg { width: 100%; height: 100%; }
+  .ripple-spoke { fill: none; stroke: var(--gold-deep); stroke-width: 2; stroke-dasharray: 300; stroke-dashoffset: 300; }
+  .js-anim.ripple-spoke { animation: drawEdge 0.8s ease forwards; }
+  .ripple-node rect { fill: var(--card-bg); stroke: var(--ink); stroke-width: 2; rx: 6; }
+  .ripple-node.center rect { fill: var(--gold); }
+  .ripple-node text { font-family: ui-monospace, monospace; font-size: 9.5px; fill: var(--ink-soft); text-anchor: middle; }
+  .ripple-node.center text { fill: var(--ink); font-weight: 700; }
+  .ripple-node { opacity: 0; animation: fadeUp 0.5s ease forwards; }
+
+  /* ---------- computation beats (shared by cluster + argument chapters) ---------- */
+  .compute-label {
+    position: absolute;
+    font-family: ui-monospace, monospace; font-size: clamp(0.68rem, 1.6vw, 0.8rem);
+    color: var(--ink-soft); display: flex; align-items: center; gap: 8px; opacity: 0;
+  }
+  .js-anim.compute-label { animation: labelHold 1.4s ease forwards; }
+  @keyframes labelHold {
+    0%   { opacity: 0; transform: translateY(6px); }
+    15%  { opacity: 1; transform: translateY(0); }
+    78%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .compute-label .dots { display: inline-flex; gap: 3px; }
+  .compute-label .dots i {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--gold-deep);
+    display: inline-block; animation: dotPulse 1s ease-in-out infinite;
+  }
+  .compute-label .dots i:nth-child(2) { animation-delay: .15s; }
+  .compute-label .dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes dotPulse { 0%, 80%, 100% { opacity: .25; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+  .cluster-trace { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .trace-edge {
+    fill: none; stroke: var(--gold-deep); stroke-width: 0.6; opacity: 0.55;
+    stroke-dasharray: 150; stroke-dashoffset: 150; vector-effect: non-scaling-stroke;
+  }
+  .js-anim.trace-edge { animation: drawTrace 0.9s ease forwards; }
+  @keyframes drawTrace { to { stroke-dashoffset: 0; } }
+
+  /* ---------- data-feed chips (argument chapter intake) ---------- */
+  .feed-chip {
+    position: absolute; font-family: ui-monospace, monospace; font-size: 0.62rem;
+    background: var(--paper); border: 1px solid var(--paper-line); color: var(--ink-soft);
+    padding: 3px 8px; border-radius: 4px; opacity: 0; white-space: nowrap;
+    transform: translate(var(--fx), var(--fy));
+  }
+  .js-anim.feed-chip { animation: feedIn 0.85s ease forwards; }
+  @keyframes feedIn {
+    0%   { opacity: 0; transform: translate(var(--fx), var(--fy)) scale(0.9); }
+    35%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(0, 0) scale(0.7); }
+  }
+
+  /* ---------- panel 0 cover ---------- */
+  .cover { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 0 6%; }
+  .cover .eyebrow { font-family: ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+  .cover h1 { font-size: clamp(1.8rem, 5vw, 3.1rem); margin-top: 10px; }
+  .cover .sub { font-size: clamp(0.9rem, 2vw, 1.15rem); color: var(--ink-soft); margin-top: 10px; font-style: italic; font-family: Georgia, serif; }
+  .cover .foot { margin-top: 26px; font-family: ui-monospace, monospace; font-size: 0.68rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+  .folders-deco { display: flex; margin-top: 22px; }
+  .folders-deco .f { width: 64px; height: 46px; background: var(--paper-deep); border: 2px solid var(--ink); border-radius: 3px 8px 4px 4px; margin-left: -18px; }
+  .folders-deco .f:nth-child(1) { transform: rotate(-7deg); }
+  .folders-deco .f:nth-child(2) { transform: rotate(3deg) translateY(-4px); background: var(--card-bg); }
+  .folders-deco .f:nth-child(3) { transform: rotate(-2deg) translateY(2px); }
+
+  /* ---------- panel 7 close ---------- */
+  .close-card { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 0 6%; opacity: 0; animation: fadeUp 0.7s ease forwards; }
+  .close-card h2 { font-size: clamp(1.15rem, 3vw, 1.8rem); }
+  .close-card .sub2 { margin-top: 8px; font-size: clamp(0.85rem, 1.8vw, 1.05rem); color: var(--ink-soft); }
+  .close-card .cta { margin-top: 14px; font-family: ui-monospace, monospace; color: var(--gold-deep); font-size: 0.82rem; letter-spacing: 0.08em; }
+
+  .arch-strip { margin-top: 18px; width: 100%; max-width: 760px; }
+  .arch-label {
+    font-family: ui-monospace, monospace; font-size: 0.62rem; letter-spacing: 0.14em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 9px;
+  }
+  .arch-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 5px 4px; }
+  .arch-node {
+    opacity: 0; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 7px;
+    padding: 5px 9px; font-family: ui-monospace, monospace; font-size: 0.62rem; color: var(--ink);
+    display: flex; flex-direction: column; align-items: center; line-height: 1.5;
+  }
+  .js-anim.arch-node { animation: fadeUp 0.45s ease forwards; }
+  .arch-node span { font-size: 0.56rem; color: var(--muted); margin-top: 1px; }
+  .arch-node.dual { flex-direction: row; gap: 8px; }
+  .arch-node.dual b { font-weight: 700; font-size: 0.6rem; }
+  .arch-node.dual .pros { color: var(--prosecutor); }
+  .arch-node.dual .def { color: var(--defense); }
+  .arch-node.adj { border-color: var(--gold-deep); }
+  .arch-arrow { color: var(--muted); font-size: 0.8rem; }
+
+  /* ---------- controls ---------- */
+  .controls {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    border: 2px solid var(--ink); border-top: none; background: var(--paper-deep);
+    padding: 9px 14px;
+  }
+  .controls button {
+    background: var(--ink); color: var(--paper); border: none; border-radius: 6px;
+    padding: 7px 13px; font-size: 0.82rem;
+  }
+  .controls button:hover { background: var(--ink-soft); }
+  .controls .count { font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--ink-soft); }
+  .controls .right { display: flex; align-items: center; gap: 8px; }
+  #playBtn { background: transparent; color: var(--ink-soft); border: 1.5px solid var(--ink-soft) !important; }
+
+  .hint { text-align: center; margin-top: 10px; font-size: 0.74rem; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="kicker">RBC · Women in T&amp;O Hackathon 2026</div>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist" aria-label="Story chapters"></div>
+
+  <div class="stage-frame">
+    <div class="stage" id="stage">
+
+      <section class="panel" data-idx="0" aria-hidden="false">
+        <div class="cover">
+          <div class="eyebrow">A Case File</div>
+          <h1>The Morning of 205 Alerts.</h1>
+          <p class="sub">A story about InvestiGenius</p>
+          <div class="folders-deco"><div class="f"></div><div class="f"></div><div class="f"></div></div>
+          <div class="foot">Click, tap an arrow key, or press space to begin →</div>
+        </div>
+      </section>
+
+      <section class="panel" data-idx="1" aria-hidden="true">
+        <div class="stamp">8:58 AM — <span id="floodCount">0</span> NEW ALERTS</div>
+        <div class="char investigator" style="bottom:24%; left:50%; transform:translateX(-50%);">
+          <div class="prop-headset"></div>
+          <div class="head"></div>
+          <div class="body"></div>
+          <div class="label">Senior AML Investigator</div>
+        </div>
+        <div class="card-field" id="floodCards"></div>
+        <div class="beat-line">"…where do I even start?"</div>
+      </section>
+
+      <section class="panel" data-idx="2" aria-hidden="true">
+        <div class="stamp">GRAPH CLUSTERING — BEFORE A SINGLE MODEL CALL</div>
+        <div class="compute-label js-anim" style="top:10%; left:50%; transform:translateX(-50%);">
+          Analyzing shared-account graph<span class="dots"><i></i><i></i><i></i></span>
+        </div>
+        <svg class="cluster-trace" id="clusterTrace" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="card-field" id="clusterCards"></div>
+        <div class="stat-readout">
+          <div class="num" id="statNum">205</div>
+          <div class="sub">alerts → network cases</div>
+          <div class="stat-flag">12 flagged high-risk</div>
+        </div>
+        <div class="beat-line">Before anyone opens a single one.</div>
+      </section>
+
+      <section class="panel" data-idx="3" aria-hidden="true">
+        <div class="stamp">CASE_001 — STRUCTURING</div>
+        <div class="graph-wrap">
+          <svg viewBox="0 0 460 240" aria-hidden="true">
+            <line class="graph-edge js-anim" x1="230" y1="120" x2="90" y2="55" style="animation-delay:.05s"/>
+            <line class="graph-edge js-anim" x1="230" y1="120" x2="370" y2="55" style="animation-delay:.2s"/>
+            <line class="graph-edge js-anim" x1="230" y1="120" x2="80" y2="185" style="animation-delay:.35s"/>
+            <line class="graph-edge js-anim" x1="230" y1="120" x2="360" y2="185" style="animation-delay:.5s"/>
+            <line class="graph-edge js-anim" x1="90" y1="55" x2="80" y2="185" style="animation-delay:.65s"/>
+            <line class="graph-edge js-anim" x1="370" y1="55" x2="360" y2="185" style="animation-delay:.8s"/>
+            <g class="graph-node hub" style="animation-delay:.05s"><circle cx="230" cy="120" r="15"/><text y="35" x="230" dy="98">HUB</text></g>
+            <g class="graph-node" style="animation-delay:.2s"><circle cx="90" cy="55" r="11"/><text x="90" y="38">ACCT-A</text></g>
+            <g class="graph-node" style="animation-delay:.3s"><circle cx="370" cy="55" r="11"/><text x="370" y="38">ACCT-B</text></g>
+            <g class="graph-node" style="animation-delay:.5s"><circle cx="80" cy="185" r="11"/><text x="80" y="208">ACCT-C</text></g>
+            <g class="graph-node" style="animation-delay:.6s"><circle cx="360" cy="185" r="11"/><text x="360" y="208">ACCT-D</text></g>
+          </svg>
+        </div>
+        <div class="beat-line">Accounts that only make sense together.</div>
+      </section>
+
+      <section class="panel" data-idx="4" aria-hidden="true">
+        <div class="stamp">THE INVESTIGATION</div>
+        <div class="compute-label js-anim" style="top:11%; left:4%;">
+          Feeding case evidence to the agents<span class="dots"><i></i><i></i><i></i></span>
+        </div>
+        <div class="feed-chip js-anim" style="top:50%; left:47%; --fx:-370px; --fy:-160px; animation-delay:.05s;">TXN-0231 · $9,800</div>
+        <div class="feed-chip js-anim" style="top:50%; left:47%; --fx:380px; --fy:-160px; animation-delay:.15s;">TXN-0198 · $8,750</div>
+        <div class="feed-chip js-anim" style="top:50%; left:47%; --fx:-400px; --fy:55px; animation-delay:.25s;">ACCT-1042 · business</div>
+        <div class="feed-chip js-anim" style="top:50%; left:47%; --fx:390px; --fy:65px; animation-delay:.35s;">PROFILE · tenure 6y</div>
+        <div class="feed-chip js-anim" style="top:50%; left:47%; --fx:0px; --fy:-205px; animation-delay:.45s;">KYC note: seasonal cash</div>
+        <div class="feed-chip js-anim" style="top:50%; left:47%; --fx:-150px; --fy:140px; animation-delay:.55s;">digital: enrolled</div>
+        <div class="feed-chip js-anim" style="top:50%; left:47%; --fx:160px; --fy:140px; animation-delay:.65s;">case_001 · 13 alerts</div>
+
+        <div class="char prosecutor" style="top:20%; left:6%;"><div class="prop-briefcase"></div><div class="head"></div><div class="body"></div><div class="label">Prosecutor</div></div>
+        <div class="char defense" style="top:20%; right:6%;"><div class="prop-folder"></div><div class="head"></div><div class="body"></div><div class="label">Defense</div></div>
+        <div class="char adjudicator" style="top:2%; left:50%; transform:translateX(-50%) scale(0.92);"><div class="head"></div><div class="body"></div><div class="label">Adjudicator</div></div>
+
+        <div class="bubble left prosecutor js-anim" style="top:8%; left:20%; animation-delay:1.3s;">
+          <span class="role">Prosecutor</span>
+          <p>Nine deposits, each just under the reporting threshold.</p>
+          <span class="chip">TXN-0231</span>
+        </div>
+        <div class="bubble right defense js-anim" style="top:8%; right:20%; animation-delay:2.3s;">
+          <span class="role">Defense</span>
+          <p>This account's own profile shows a seasonal cash pattern.</p>
+          <span class="chip">PROFILE-KYC</span>
+        </div>
+        <div class="bubble center adjudicator js-anim" style="bottom:6%; left:50%; transform:translateX(-50%); animation-delay:3.2s;">
+          <span class="role">Adjudicator</span>
+          <p>Pattern holds across multiple accounts. Seasonal read doesn't cover all nine. Escalate — confidence 87%.</p>
+          <span class="chip">VERDICT</span>
+        </div>
+      </section>
+
+      <section class="panel" data-idx="5" aria-hidden="true">
+        <div class="stamp">HUMAN REVIEW</div>
+        <div class="char investigator" style="bottom:24%; left:30%;">
+          <div class="head"></div>
+          <div class="body"></div>
+          <div class="label">Senior AML Investigator</div>
+        </div>
+        <div class="stamp-btn" style="bottom:38%; left:48%;">Approved</div>
+        <div class="chain" style="top:16%; right:12%;">
+          <div class="link js-anim" style="animation-delay:.1s"></div>
+          <div class="link js-anim" style="animation-delay:.3s"></div>
+          <div class="link js-anim" style="animation-delay:.5s"></div>
+          <div class="lock js-anim" style="animation-delay:.75s; margin-left:6px;"></div>
+        </div>
+        <div class="beat-line">A human always makes the final call. The record locks the moment they do.</div>
+      </section>
+
+      <section class="panel" data-idx="6" aria-hidden="true">
+        <div class="stamp">BEYOND THIS CASE</div>
+        <div class="ripple-wrap">
+          <svg viewBox="0 0 460 240" aria-hidden="true">
+            <line class="ripple-spoke js-anim" x1="230" y1="120" x2="80" y2="40" style="animation-delay:.1s"/>
+            <line class="ripple-spoke js-anim" x1="230" y1="120" x2="380" y2="40" style="animation-delay:.3s"/>
+            <line class="ripple-spoke js-anim" x1="230" y1="120" x2="80" y2="200" style="animation-delay:.5s"/>
+            <line class="ripple-spoke js-anim" x1="230" y1="120" x2="380" y2="200" style="animation-delay:.7s"/>
+            <g class="ripple-node center" style="animation-delay:.05s"><rect x="192" y="100" width="76" height="40"/><text x="230" y="124">This case</text></g>
+            <g class="ripple-node" style="animation-delay:.2s"><rect x="34" y="20" width="92" height="38"/><text x="80" y="43">SAR Filing</text></g>
+            <g class="ripple-node" style="animation-delay:.4s"><rect x="334" y="20" width="92" height="38"/><text x="380" y="43">Onboarding</text></g>
+            <g class="ripple-node" style="animation-delay:.6s"><rect x="30" y="182" width="100" height="38"/><text x="80" y="205">Fraud Screening</text></g>
+            <g class="ripple-node" style="animation-delay:.8s"><rect x="326" y="182" width="108" height="38"/><text x="380" y="205">Sanctions Screening</text></g>
+          </svg>
+        </div>
+        <div class="beat-line">This case closes. The pattern doesn't — it ripples into every corner of the bank that triages risk.</div>
+      </section>
+
+      <section class="panel" data-idx="7" aria-hidden="true">
+        <div class="close-card">
+          <h2>Using agentic AI, we solved a real business problem.</h2>
+          <p class="sub2">This is InvestiGenius.</p>
+          <div class="arch-strip">
+            <div class="arch-label">The architecture behind the story</div>
+            <div class="arch-row">
+              <div class="arch-node js-anim" style="animation-delay:.05s">Alerts<span>205</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node js-anim" style="animation-delay:.2s">Graph Clustering<span>102 cases</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node dual js-anim" style="animation-delay:.35s"><b class="pros">Prosecutor</b><b class="def">Defense</b></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node adj js-anim" style="animation-delay:.5s">Adjudicator<span>cites &amp; rules</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node js-anim" style="animation-delay:.65s">Human Review<span>approve / reject</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node js-anim" style="animation-delay:.8s">Audit Log<span>hash-chained</span></div>
+            </div>
+          </div>
+          <p class="cta">→ SEE IT LIVE</p>
+        </div>
+      </section>
+
+    </div>
+    <div class="controls">
+      <button id="prevBtn" aria-label="Previous chapter">← Back</button>
+      <div class="right">
+        <span class="count"><span id="curNum">1</span> / 8</span>
+        <button id="playBtn">▶ Auto-play</button>
+      </div>
+      <button id="nextBtn" aria-label="Next chapter">Next →</button>
+    </div>
+  </div>
+  <div class="hint">Arrow keys / space to advance · click a folder tab to jump to a chapter · click the deck's edges to move</div>
+</div>
+
+<script>
+(function () {
+  var LABELS = ["Cover", "Flood", "Cluster", "Case", "Argument", "Sign-off", "Ripple", "Close"];
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  var tabsEl = document.getElementById("tabs");
+  var current = 0;
+  var playing = false;
+  var playTimer = null;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  LABELS.forEach(function (label, i) {
+    var b = document.createElement("button");
+    b.className = "tab";
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-current", i === 0 ? "true" : "false");
+    b.innerHTML = '<span class="num">' + (i + 1) + "</span>" + label;
+    b.addEventListener("click", function () { stopPlay(); show(i); });
+    tabsEl.appendChild(b);
+  });
+  var tabs = Array.prototype.slice.call(tabsEl.children);
+
+  function restart(container) {
+    container.querySelectorAll(".js-anim").forEach(function (el) {
+      el.style.animation = "none";
+      void el.offsetWidth;
+      el.style.animation = "";
+    });
+  }
+
+  function scatterCards(container, mode) {
+    container.innerHTML = "";
+    var traceSvg = mode === "cluster" ? document.getElementById("clusterTrace") : null;
+    if (traceSvg) traceSvg.innerHTML = "";
+    var count = mode === "flood" ? 30 : 20;
+    var clusters = [[18, 28], [46, 62], [74, 32], [88, 68], [30, 78]];
+    for (var i = 0; i < count; i++) {
+      var card = document.createElement("div");
+      var left = 6 + Math.random() * 82;
+      var top = mode === "flood" ? 30 + Math.random() * 56 : 8 + Math.random() * 74;
+      var rot = (Math.random() * 26 - 13).toFixed(1) + "deg";
+      var delay = mode === "flood"
+        ? (Math.random() * 1.6).toFixed(2) + "s"
+        : (0.5 + Math.random() * 0.9).toFixed(2) + "s";
+      card.className = "card " + (mode === "flood" ? "card-fall" : (i % 5 === 0 ? "card-stay" : "card-merge"));
+      card.style.left = left + "%";
+      card.style.top = top + "%";
+      card.style.setProperty("--rot", rot);
+      card.style.animationDelay = delay;
+      if (mode !== "flood") {
+        var c = clusters[i % clusters.length];
+        card.style.setProperty("--tx", (c[0] - left) + "%");
+        card.style.setProperty("--ty", (c[1] - top) + "%");
+        if (traceSvg) {
+          var ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          ln.setAttribute("x1", left.toFixed(1)); ln.setAttribute("y1", top.toFixed(1));
+          ln.setAttribute("x2", c[0]); ln.setAttribute("y2", c[1]);
+          ln.setAttribute("class", "trace-edge js-anim");
+          ln.style.animationDelay = delay;
+          traceSvg.appendChild(ln);
+        }
+      }
+      container.appendChild(card);
+    }
+  }
+
+  function countStat(el, from, to, duration) {
+    if (reduceMotion) { el.textContent = to; return; }
+    var start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min(1, (ts - start) / duration);
+      el.textContent = Math.round(from + (to - from) * p);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function show(idx) {
+    idx = Math.max(0, Math.min(panels.length - 1, idx));
+    current = idx;
+    panels.forEach(function (p, i) {
+      var active = i === idx;
+      p.setAttribute("aria-hidden", active ? "false" : "true");
+      if (active) restart(p);
+    });
+    tabs.forEach(function (t, i) { t.setAttribute("aria-current", i === idx ? "true" : "false"); });
+    document.getElementById("curNum").textContent = idx + 1;
+
+    if (idx === 1) {
+      scatterCards(document.getElementById("floodCards"), "flood");
+      countStat(document.getElementById("floodCount"), 0, 205, 1500);
+    }
+    if (idx === 2) {
+      scatterCards(document.getElementById("clusterCards"), "cluster");
+      setTimeout(function () {
+        countStat(document.getElementById("statNum"), 205, 102, 1200);
+      }, 450);
+    }
+  }
+
+  document.getElementById("nextBtn").addEventListener("click", function () { stopPlay(); show(current + 1); });
+  document.getElementById("prevBtn").addEventListener("click", function () { stopPlay(); show(current - 1); });
+
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight" || e.key === " ") { stopPlay(); show(current + 1); e.preventDefault(); }
+    if (e.key === "ArrowLeft") { stopPlay(); show(current - 1); e.preventDefault(); }
+  });
+
+  var edgeWidth = 90;
+  document.getElementById("stage").addEventListener("click", function (e) {
+    var rect = e.currentTarget.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    if (x < edgeWidth) { stopPlay(); show(current - 1); }
+    else if (x > rect.width - edgeWidth) { stopPlay(); show(current + 1); }
+  });
+
+  var playBtn = document.getElementById("playBtn");
+  function stopPlay() {
+    if (!playing) return;
+    playing = false;
+    clearInterval(playTimer);
+    playBtn.textContent = "▶ Auto-play";
+  }
+  playBtn.addEventListener("click", function () {
+    if (playing) { stopPlay(); return; }
+    playing = true;
+    playBtn.textContent = "❚❚ Pause";
+    playTimer = setInterval(function () {
+      var next = current + 1;
+      if (next > panels.length - 1) next = 0;
+      show(next);
+    }, 6500);
+  });
+
+  show(0);
+})();
+</script>
