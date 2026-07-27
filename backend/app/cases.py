@@ -52,6 +52,27 @@ def list_cases() -> list[dict]:
     return [dict(r) for r in rows]
 
 
+def list_alerts() -> list[dict]:
+    """The raw alerts queue — every alert as it looked before graph
+    clustering ever ran, plus which case it ended up merged into. This is
+    what "high volume of alerts" actually looks like prior to automated
+    analysis; app/graph/clustering.py is what turns this into list_cases().
+    """
+    conn = connect()
+    rows = conn.execute(
+        """
+        SELECT al.alert_id, al.account_id, al.txn_id, al.reason, al.raised_at,
+               ca.case_id, c.typology_guess, c.risk_score
+        FROM alerts al
+        LEFT JOIN case_alerts ca ON ca.alert_id = al.alert_id
+        LEFT JOIN cases c ON c.case_id = ca.case_id
+        ORDER BY al.raised_at DESC
+        """
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
 def get_case_detail(case_id: str) -> dict | None:
     conn = connect()
     case = conn.execute("SELECT * FROM cases WHERE case_id = ?", (case_id,)).fetchone()

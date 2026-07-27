@@ -4,6 +4,7 @@ import { AutomatedSignals } from "../components/AutomatedSignals";
 import { InvestigationPanel } from "../components/InvestigationPanel";
 import { InvestigationPlaybook } from "../components/InvestigationPlaybook";
 import { NetworkGraph } from "../components/NetworkGraph";
+import { PrecedentChat } from "../components/PrecedentChat";
 import { AuditTrail } from "../components/AuditTrail";
 import { getCase } from "../lib/api";
 import type { CaseDetail as CaseDetailType, DemoRole } from "../types/investigation";
@@ -98,6 +99,8 @@ export function CaseDetail({ caseId, role, onBack }: Props) {
                 <InvestigationPlaybook playbook={detail.playbook} />
 
                 <InvestigationPanel caseId={detail.case_id} role={role} />
+
+                <PrecedentChat caseId={detail.case_id} role={role} />
               </div>
             </>
           )}

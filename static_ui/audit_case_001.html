@@ -4,7 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Audit — case_001 — InvestiGenius</title>
-<link rel="stylesheet" href="styles.css">
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+header {
+  border-bottom: 4px solid #FFC72C;
+  background: #0033A0;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .brand { font-weight: 600; color: #fff; }
+header .snapshot-tag {
+  font-size: 12px;
+  color: #e2e8f0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+.back-link { font-size: 14px; color: #64748b; text-decoration: none; }
+.back-link:hover { color: #1e293b; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-tile { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+.stat-value { font-size: 28px; font-weight: 600; margin-top: 4px; }
+.stat-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.stat-value.accent-red { color: #b91c1c; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.card-table { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+.card-table thead { background: #f8fafc; color: #64748b; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; }
+.card-table th, .card-table td { text-align: left; padding: 10px 14px; }
+.card-table tbody tr { border-top: 1px solid #f1f5f9; }
+.card-table tbody tr.linked:hover { background: #f8fafc; }
+.card-table td a { color: #1e40af; text-decoration: none; font-weight: 500; }
+.card-table td a:hover { text-decoration: underline; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 999px; border: 1px solid; }
+.badge-red { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.badge-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.badge-emerald { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.badge-slate { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-title { font-size: 18px; font-weight: 600; margin: 0; }
+.page-sub { font-size: 13px; color: #64748b; margin: 4px 0 0; text-transform: capitalize; }
+
+.graph-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+.graph-card svg { display: block; width: 100%; height: auto; background: #fff; }
+.legend { display: flex; gap: 16px; padding: 8px 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.note-banner { border: 1px solid #fde68a; background: #fffbeb; color: #78350f; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+.info-banner { border: 1px solid #bae6fd; background: #f0f9ff; color: #0c4a6e; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+
+.section-label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; font-weight: 600; margin: 24px 0 10px; }
+
+.arg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.arg-card { background: #fff; border-radius: 8px; padding: 16px; border: 1px solid #e2e8f0; }
+.arg-card.prosecutor { border-color: #fecaca; }
+.arg-card.defense { border-color: #bfdbfe; }
+.arg-card h3 { margin: 0 0 8px; font-size: 13px; }
+.arg-card p { font-size: 13px; color: #334155; margin: 0 0 10px; }
+.claim { font-size: 12px; color: #475569; border-top: 1px solid #f1f5f9; padding-top: 8px; margin-top: 8px; }
+.cite { margin-left: 6px; font-family: ui-monospace, monospace; background: #f1f5f9; color: #64748b; border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+
+.narrative-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.6; color: #1e293b; margin-bottom: 24px; }
+.verdict-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+.audit-entry { background: #fff; border-bottom: 1px solid #f1f5f9; padding: 14px; font-size: 13px; }
+.audit-entry:last-child { border-bottom: none; }
+.audit-entry .top { display: flex; justify-content: space-between; }
+.audit-entry .actor { color: #64748b; font-size: 12px; margin-top: 2px; }
+.audit-entry pre { background: #f8fafc; border-radius: 6px; padding: 8px; font-size: 11px; margin: 8px 0 0; overflow-x: auto; }
+.audit-entry .hash { font-size: 10px; color: #94a3b8; margin-top: 6px; font-family: ui-monospace, monospace; word-break: break-all; }
+
+.hero { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+.hero h1 { margin: 0 0 8px; font-size: 22px; }
+.hero p { color: #475569; font-size: 14px; line-height: 1.6; margin: 0; }
+.link-list { list-style: none; padding: 0; margin: 0; }
+.link-list li { margin-bottom: 8px; }
+.link-list a { color: #1e40af; text-decoration: none; font-size: 14px; }
+.link-list a:hover { text-decoration: underline; }
+footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 24px; }
+
+</style>
 </head>
 <body>
 <header>
@@ -155,6 +250,137 @@
   "note": "DRAFT \u2014 for investigator review, not a final determination. Twelve accounts (ACCT-1001 through ACCT-1012) each transferred amounts just under the $10,000 CTR threshold into ACCT-9000 within a 48-hour window (TXN-0001 through TXN-0012), which was then followed by a same-day consolidated outbound transfer of the full balance (TXN-0013). While ACCT-9000's KYC profile identifies a catering business with invoice-referenced transfers, which offers a plausible innocent explanation for individual transaction amounts, the tight 48-hour clustering of twelve near-threshold deposits followed immediately by full-balance outflow is not adequately explained by normal invoice payment timing. This combination is consistent with a structuring-into-layering pattern. Recommend escalation for full investigation, including verification of the underlying invoices against the counterparty accounts."
 }</pre>
   <div class="hash">hash: ea111d7381ff84f6723c5c640b86201e1a0043f96a6e9059f7c87616132c9a98</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-26T23:17:42.044Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "confidence": 0.82,
+  "flagged_for_review": false,
+  "uncited_claim_count": 0,
+  "verdict": "escalate"
+}</pre>
+  <div class="hash">hash: edc45344de936dd1f904be81d1bf642a4f68fc58675430d25329ed9c4bfdfc52</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-26T23:55:06.359Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "confidence": 0.82,
+  "flagged_for_review": false,
+  "uncited_claim_count": 0,
+  "verdict": "escalate"
+}</pre>
+  <div class="hash">hash: 50637baca0e963451a5105005e155d1e22a0b658196b94c1c99d2b5bde072b10</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>human approve</strong><span>2026-07-26T23:55:06.397Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "note": "Escalating per structuring pattern."
+}</pre>
+  <div class="hash">hash: 0ab1f5482f2ae2bbcd52befd312d71fec0362f3ed54adfc4d442b8ad4536ef72</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T00:13:18.944Z</span></div>
+  <div class="actor">by junior_investigator</div>
+  <pre>{
+  "confidence": 0.82,
+  "flagged_for_review": false,
+  "uncited_claim_count": 0,
+  "verdict": "escalate"
+}</pre>
+  <div class="hash">hash: 5b72e85601ab1f97659d9b1f07efe16b81e91ebf2e482e4985fa9f239b7f42a4</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T00:14:33.498Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "confidence": 0.82,
+  "flagged_for_review": false,
+  "uncited_claim_count": 0,
+  "verdict": "escalate"
+}</pre>
+  <div class="hash">hash: de0cb2a7806d204364743566cc2abd6f6966292764dd6c5b064555cd5ae6db5b</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>human approve</strong><span>2026-07-27T00:14:40.845Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "note": "DRAFT \u2014 for investigator review, not a final determination. Twelve accounts (ACCT-1001 through ACCT-1012) each transferred amounts just under the $10,000 CTR threshold into ACCT-9000 within a 48-hour window (TXN-0001 through TXN-0012), which was then followed by a same-day consolidated outbound transfer of the full balance (TXN-0013). While ACCT-9000's KYC profile identifies a catering business with invoice-referenced transfers, which offers a plausible innocent explanation for individual transaction amounts, the tight 48-hour clustering of twelve near-threshold deposits followed immediately by full-balance outflow is not adequately explained by normal invoice payment timing. This combination is consistent with a structuring-into-layering pattern. Recommend escalation for full investigation, including verification of the underlying invoices against the counterparty accounts."
+}</pre>
+  <div class="hash">hash: 9444a597bdbb779f5fe7dd440136bd7b65762ea1534cd335a715d130c47f9bf2</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T00:40:23.668Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "confidence": 0.78,
+  "flagged_for_review": true,
+  "uncited_claim_count": 3,
+  "verdict": "needs_review"
+}</pre>
+  <div class="hash">hash: a8f26a6d343c8e323618c2f398d93e99c0cc19d047a7f0a96cdf5e6659fca9fe</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T01:08:24.973Z</span></div>
+  <div class="actor">by compliance_officer</div>
+  <pre>{
+  "confidence": 0.78,
+  "flagged_for_review": true,
+  "uncited_claim_count": 3,
+  "verdict": "needs_review"
+}</pre>
+  <div class="hash">hash: e2d9849a85312d247f913c2ab2c1a53584952e88d3c1e7f0e60196b6540f92c6</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T01:21:28.956Z</span></div>
+  <div class="actor">by junior_investigator</div>
+  <pre>{
+  "confidence": 0.78,
+  "flagged_for_review": true,
+  "uncited_claim_count": 3,
+  "verdict": "needs_review"
+}</pre>
+  <div class="hash">hash: d06d9be47e36631e352d54fdce9e08d3e5f2f3c69d52575b73f33c14beed9d60</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T01:21:39.243Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "confidence": 0.78,
+  "flagged_for_review": true,
+  "uncited_claim_count": 3,
+  "verdict": "needs_review"
+}</pre>
+  <div class="hash">hash: 5c1913dc33110d8fe717aecb7b1d6f9bfd2cbed387e441499e5f507e408c7107</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>human approve</strong><span>2026-07-27T01:21:43.323Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "note": "Summary of findings for human review:\n\nThe transaction pattern meets all four criteria of the standardized structuring playbook: (1) 12 inbound transfers to ACCT-9000, each 92-97.5% of the $10,000 CTR threshold [STR-1]; (2) all clustered within a 33-hour window, well inside the 72-hour flag [STR-2]; (3) a rapid consolidated outbound sweep of $113,700 to an unvetted external account (EXT-5000) only 7 hours after the last inbound transfer [STR-3, TXN-0013]; and (4) each of the 12 feeder accounts (ACCT-1001 through ACCT-1012) transacted with ACCT-9000 exactly once, indicating no established recurring relationship [STR-4]. This is corroborated by 13 independent system alerts (ALERT-0001 through ALERT-0012 for the near-threshold inbounds, ALERT-0013 for the consolidated outflow).\n\nThe defense's alternative explanation \u2014 that this represents legitimate catering payments for a shared large event (e.g., wedding/festival) followed by routine business fund consolidation \u2014 is plausible on its face and supported by ACCT-9000's long tenure (13.6 years) and on-file KYC as a registered caterer [ACCT-9000]. The \"organically increasing\" invoice amounts ($9,200 to $9,750) and one-time nature of each feeder payment [TXN-0001, TXN-0012, TXN-0007] are consistent with distinct customers paying varying invoice totals rather than obvious identical structuring amounts.\n\nHowever, several factors weigh against the innocent explanation and warrant escalation rather than closure:\n1. The near-uniform steady increment in transfer amounts ($9,200, $9,250, $9,300... in $50 increments) is unusual for organic, independent invoices from unrelated customers \u2014 this pattern looks more procedurally generated than naturally variable.\n2. All 12 amounts fall strictly within the 92-97.5% CTR-threshold band with none exceeding $10,000 or falling into a more \"natural\" wider distribution \u2014 a coincidence that is statistically improbable for genuine independent invoices.\n3. One feeder account (ACCT-1008) is a student based in the Philippines with under 3 years of tenure and income under $20K \u2014 an outlier profile inconsistent with a \"long-standing local customer\" narrative the defense offers for other accounts.\n4. The destination of the outbound sweep, EXT-5000, has no KYC information on file at all, which is a meaningful gap \u2014 legitimate business operating/payroll accounts are typically identifiable and documented; a total absence of KYC data on the receiving external account raises the risk that funds are exiting to an unverified or unmonitored destination [EXT-5000].\n5. The rapid timing (funds swept out just 7 hours after the last inbound, and the entire cluster-to-sweep cycle completing within roughly 40 hours) is consistent with both innocent daily cash consolidation and deliberate layering, so timing alone does not resolve the ambiguity.\n\nOn balance, the objective structuring indicators (STR-1 through STR-4, all matched) plus the anomalous fee uniformity and lack of KYC on the destination account outweigh the plausible-but-unverified legitimate business narrative. This case should be escalated for further investigation, including verification of the underlying catering contract/invoices, confirmation of the customers' relationship to a purported shared event, and identification/KYC of EXT-5000, before a final determination is made."
+}</pre>
+  <div class="hash">hash: b0ff816cb512ef0b4a519d7dd5b86fe1016d6cb90e6500fb80d5fdcbe7d5a192</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T01:22:22.488Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "confidence": 0.78,
+  "flagged_for_review": true,
+  "uncited_claim_count": 3,
+  "verdict": "needs_review"
+}</pre>
+  <div class="hash">hash: 21f06ca554a5a9d44c39b21c2bd55d8276a73c532bc6efcbdfffe7d3e6afc6d5</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T01:35:53.606Z</span></div>
+  <div class="actor">by junior_investigator</div>
+  <pre>{
+  "confidence": 0.78,
+  "flagged_for_review": true,
+  "uncited_claim_count": 3,
+  "verdict": "needs_review"
+}</pre>
+  <div class="hash">hash: b7b7a1eaea58eeb37f93826a8806fe8ccb0ab6fd65800cc52a4367fbf30de6de</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T01:48:24.336Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "confidence": 0.78,
+  "flagged_for_review": true,
+  "uncited_claim_count": 3,
+  "verdict": "needs_review"
+}</pre>
+  <div class="hash">hash: a895d136e557dbb76f83de28f72fc85d81eba3c8f616705f9d05e829dd775266</div>
 </div></div>
 </div>
 <footer>Static snapshot generated from live dataset — not connected to a running backend. See TEAM_BRIEFING.md for the full write-up.</footer>

@@ -1,0 +1,16 @@
+{
+  "content": {
+    "verdict": "close",
+    "confidence": 0.78,
+    "narrative": "This case rests on a single transaction (TXN-0116, $5,049.45, ACCT-2110 -> ACCT-2111) that triggered a routine \"elevated single transfer\" monitoring alert (ALERT-0116). Both prosecution and defense agree there is no corroborating evidence of structuring, layering, rapid fund movement, or shell-entity involvement.\n\nKey factors supporting closure:\n- Graph risk score is low (10.0/100), and no typology was flagged by the system for case_013.\n- Both accounts are long-tenured individual retail customers (ACCT-2110: 23.7 years; ACCT-2111: 7.0 years) with no adverse KYC notes on file.\n- The transfer is a single, one-off event rather than part of a repeated or structured pattern; similar demographic/income profiles (CA residence, $20K-$40K income) and ACCT-2111's homemaker status are consistent with an innocent intra-family or household support transfer, though this is inferential and not confirmed by any documentation.\n- The alert derives purely from a routine amount threshold, not a pattern-specific typology rule.\n\nCountervailing considerations (why confidence is not higher):\n- KYC notes are listed as \"none on file\" for both accounts, which is an absence of information rather than a positive confirmation of legitimacy \u2014 it does not fully rule out risk.\n- No purpose-of-transfer documentation or source-of-funds evidence is present to affirmatively verify the innocent explanation (e.g., no evidence confirming this was a family/spousal transfer).\n- A single elevated transfer alone is thin evidentiary ground either way; while it does not meet a threshold for escalation, this is a low-information case overall.\n\nOn balance, the absence of any corroborating suspicious indicators, the low graph risk score, clean KYC history, and single/non-repetitive nature of the transaction support closing this alert as a false/low-value positive. Recommend closure with standard documentation, subject to human investigator review given the thinness of the underlying record (no stated purpose of transfer, no source-of-funds verification).",
+    "citations": [
+      "TXN-0116",
+      "ALERT-0116",
+      "ACCT-2110",
+      "ACCT-2111",
+      "case_013"
+    ]
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

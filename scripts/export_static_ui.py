@@ -33,6 +33,14 @@ HUB_COLOR = "#b45309"
 
 FEATURED_CASE_IDS = ["case_001", "case_005", "case_007", "case_013"]
 
+# Inlined into every page's <head> rather than linked via <link href="styles.css">
+# — a locked-down corporate browser (or a zip transfer that drops the
+# sibling file, or Windows tagging extracted files with Mark-of-the-Web)
+# can block a local file:// page from loading a *separate* local file as a
+# resource. Inlining means each page is fully self-contained; nothing to
+# transfer alongside it, nothing for a browser policy to block.
+_CSS = (OUT / "styles.css").read_text(encoding="utf-8")
+
 
 def connect() -> sqlite3.Connection:
     conn = sqlite3.connect(DB_PATH)
@@ -57,7 +65,9 @@ def page(title: str, body: str, tag: str = "Static snapshot") -> str:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} — InvestiGenius</title>
-<link rel="stylesheet" href="styles.css">
+<style>
+{_CSS}
+</style>
 </head>
 <body>
 <header>

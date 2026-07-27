@@ -1,16 +1,41 @@
 {
   "content": {
-    "summary": "ACCT-9000 is registered to a small business (a catering company per KYC records) and the twelve inbound transfers are labeled with invoice references. Under-$10,000 amounts could plausibly reflect genuine invoice values rather than deliberate structuring, though the clustering in a 48-hour window is unusual for normal invoice payment timing.",
+    "summary": "While the transaction pattern superficially matches the standardized structuring checklist (STR-1 through STR-4), the underlying account profiles and business context support a plausible legitimate explanation: this looks like a catering business collecting payments from a dozen individual customers \u2014 likely for a large shared event (e.g., a wedding, festival, or holiday catering contract) \u2014 followed by the caterer sweeping receipts to its own external operating/payroll account. Several case-specific facts support this innocent reading rather than deliberate structuring.",
     "claims": [
       {
-        "statement": "ACCT-9000's KYC profile lists the account holder as a catering business, and each inbound transfer carries a distinct invoice reference number.",
-        "citation_id": "TXN-0001",
-        "typology": "none"
+        "statement": "The receiving account, ACCT-9000, is a registered catering business (Coastline Catering Co.) with KYC on file and 13.6 years of tenure, consistent with a long-standing legitimate merchant rather than a shell or mule account newly set up to receive structured funds.",
+        "citation_id": "ACCT-9000",
+        "typology": "legitimate business operations"
       },
       {
-        "statement": "The account holder's stated average monthly revenue in KYC records is consistent with roughly this transaction volume on a monthly basis, not necessarily suspicious in isolation.",
+        "statement": "The 12 inbound payments are plausibly customer payments for a single large catering job (e.g., a wedding or corporate event) split among many guests/family members rather than structured deposits, since each payer is a distinct individual account rather than the same person repeatedly depositing.",
+        "citation_id": "TXN-0001",
+        "typology": "shared event payment pooling"
+      },
+      {
+        "statement": "Payment amounts increase steadily and organically from $9,200 to $9,750 across the 12 transactions, a pattern consistent with different customers independently paying slightly different invoice totals (e.g., varying guest counts or add-on services) rather than a coordinated attempt to stay just under the $10,000 CTR threshold.",
+        "citation_id": "TXN-0012",
+        "typology": "independent invoice variation"
+      },
+      {
+        "statement": "The inbound transfers span 33 hours (not a tight simultaneous burst), consistent with customers paying at their own convenience across a weekend/event period rather than a single actor rapidly structuring cash in a short window.",
+        "citation_id": "ALERT-0010",
+        "typology": "organic payment timing"
+      },
+      {
+        "statement": "Many of the paying individuals are retirees, homemakers, and self-employed/contract workers based in CA with long account tenures (e.g., ACCT-1005 at 14.3 years, ACCT-1009 at 13.4 years, ACCT-1011 at 11.4 years), suggesting established local customers of the caterer rather than newly recruited straw depositors.",
+        "citation_id": "ACCT-1005",
+        "typology": "established customer relationships"
+      },
+      {
+        "statement": "The outbound sweep (TXN-0013) to EXT-5000 for $113,700 is consistent with a normal business practice of consolidating daily/weekly receipts into an external primary operating or payroll account, a common cash-management routine for small businesses rather than covert layering.",
         "citation_id": "TXN-0013",
-        "typology": "none"
+        "typology": "routine business fund consolidation"
+      },
+      {
+        "statement": "Each feeder account transacts with ACCT-9000 only once in the record, which is exactly what would be expected from one-time or infrequent catering customers paying a single invoice for a one-off event, rather than an ongoing structuring relationship.",
+        "citation_id": "TXN-0007",
+        "typology": "one-time customer invoice payment"
       }
     ]
   },

@@ -1,9 +1,24 @@
 {
   "content": {
     "verdict": "escalate",
-    "confidence": 0.82,
-    "narrative": "DRAFT — for investigator review, not a final determination. Twelve accounts (ACCT-1001 through ACCT-1012) each transferred amounts just under the $10,000 CTR threshold into ACCT-9000 within a 48-hour window (TXN-0001 through TXN-0012), which was then followed by a same-day consolidated outbound transfer of the full balance (TXN-0013). While ACCT-9000's KYC profile identifies a catering business with invoice-referenced transfers, which offers a plausible innocent explanation for individual transaction amounts, the tight 48-hour clustering of twelve near-threshold deposits followed immediately by full-balance outflow is not adequately explained by normal invoice payment timing. This combination is consistent with a structuring-into-layering pattern. Recommend escalation for full investigation, including verification of the underlying invoices against the counterparty accounts.",
-    "citations": ["TXN-0001", "TXN-0006", "TXN-0013"]
+    "confidence": 0.78,
+    "narrative": "Summary of findings for human review:\n\nThe transaction pattern meets all four criteria of the standardized structuring playbook: (1) 12 inbound transfers to ACCT-9000, each 92-97.5% of the $10,000 CTR threshold [STR-1]; (2) all clustered within a 33-hour window, well inside the 72-hour flag [STR-2]; (3) a rapid consolidated outbound sweep of $113,700 to an unvetted external account (EXT-5000) only 7 hours after the last inbound transfer [STR-3, TXN-0013]; and (4) each of the 12 feeder accounts (ACCT-1001 through ACCT-1012) transacted with ACCT-9000 exactly once, indicating no established recurring relationship [STR-4]. This is corroborated by 13 independent system alerts (ALERT-0001 through ALERT-0012 for the near-threshold inbounds, ALERT-0013 for the consolidated outflow).\n\nThe defense's alternative explanation \u2014 that this represents legitimate catering payments for a shared large event (e.g., wedding/festival) followed by routine business fund consolidation \u2014 is plausible on its face and supported by ACCT-9000's long tenure (13.6 years) and on-file KYC as a registered caterer [ACCT-9000]. The \"organically increasing\" invoice amounts ($9,200 to $9,750) and one-time nature of each feeder payment [TXN-0001, TXN-0012, TXN-0007] are consistent with distinct customers paying varying invoice totals rather than obvious identical structuring amounts.\n\nHowever, several factors weigh against the innocent explanation and warrant escalation rather than closure:\n1. The near-uniform steady increment in transfer amounts ($9,200, $9,250, $9,300... in $50 increments) is unusual for organic, independent invoices from unrelated customers \u2014 this pattern looks more procedurally generated than naturally variable.\n2. All 12 amounts fall strictly within the 92-97.5% CTR-threshold band with none exceeding $10,000 or falling into a more \"natural\" wider distribution \u2014 a coincidence that is statistically improbable for genuine independent invoices.\n3. One feeder account (ACCT-1008) is a student based in the Philippines with under 3 years of tenure and income under $20K \u2014 an outlier profile inconsistent with a \"long-standing local customer\" narrative the defense offers for other accounts.\n4. The destination of the outbound sweep, EXT-5000, has no KYC information on file at all, which is a meaningful gap \u2014 legitimate business operating/payroll accounts are typically identifiable and documented; a total absence of KYC data on the receiving external account raises the risk that funds are exiting to an unverified or unmonitored destination [EXT-5000].\n5. The rapid timing (funds swept out just 7 hours after the last inbound, and the entire cluster-to-sweep cycle completing within roughly 40 hours) is consistent with both innocent daily cash consolidation and deliberate layering, so timing alone does not resolve the ambiguity.\n\nOn balance, the objective structuring indicators (STR-1 through STR-4, all matched) plus the anomalous fee uniformity and lack of KYC on the destination account outweigh the plausible-but-unverified legitimate business narrative. This case should be escalated for further investigation, including verification of the underlying catering contract/invoices, confirmation of the customers' relationship to a purported shared event, and identification/KYC of EXT-5000, before a final determination is made.",
+    "citations": [
+      "STR-1",
+      "STR-2",
+      "STR-3",
+      "STR-4",
+      "TXN-0001",
+      "TXN-0013",
+      "ALERT-0001",
+      "ALERT-0013",
+      "ACCT-9000",
+      "ACCT-1008",
+      "EXT-5000",
+      "TXN-0012",
+      "TXN-0007",
+      "ACCT-1005"
+    ]
   },
   "model": "claude-sonnet-5",
   "source": "live"

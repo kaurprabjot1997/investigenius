@@ -15,10 +15,24 @@ const VERDICT_STYLE: Record<InvestigationResult["verdict"]["verdict"], string> =
 
 const CAN_APPROVE: DemoRole[] = ["senior_investigator", "compliance_officer"];
 
+type Stage = "idle" | "prosecutor" | "defense" | "adjudicator" | "done";
+const STAGE_ORDER: Stage[] = ["prosecutor", "defense", "adjudicator", "done"];
+const STAGE_LABEL: Record<Exclude<Stage, "idle">, string> = {
+  prosecutor: "Prosecutor building the case for suspicion",
+  defense: "Defense searching for legitimate explanations",
+  adjudicator: "Adjudicator weighing both arguments",
+  done: "Investigation complete",
+};
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export function InvestigationPanel({ caseId, role }: Props) {
   const [result, setResult] = useState<InvestigationResult | null>(null);
   const [narrative, setNarrative] = useState("");
   const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState<Stage>("idle");
   const [error, setError] = useState<string | null>(null);
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
 
@@ -26,12 +40,25 @@ export function InvestigationPanel({ caseId, role }: Props) {
     setLoading(true);
     setError(null);
     setApprovalStatus(null);
+    setResult(null);
+    setStage("prosecutor");
     try {
       const res = await investigateCase(caseId, role);
+      // The response already contains everything — the agents genuinely do
+      // run in this order server-side (Prosecutor+Defense in parallel, then
+      // Adjudicator), so staging the reveal to match rather than dumping
+      // the whole result at once is honest, not just decorative.
+      await delay(500);
+      setStage("defense");
+      await delay(500);
+      setStage("adjudicator");
+      await delay(600);
       setResult(res);
       setNarrative(res.verdict.narrative);
+      setStage("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Investigation failed.");
+      setStage("idle");
     } finally {
       setLoading(false);
     }
@@ -46,25 +73,56 @@ export function InvestigationPanel({ caseId, role }: Props) {
     }
   }
 
+  const stageProgress = stage === "idle" ? -1 : STAGE_ORDER.indexOf(stage);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">AI Investigation</h2>
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wide bg-slate-700 text-white px-1.5 py-0.5 rounded">
+              This case's evidence only
+            </span>
+            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">AI Investigation</h2>
+          </div>
+          <p className="text-xs text-slate-500 mt-1">Prosecutor/Defense argue for and against suspicion using only this case's own accounts and transactions.</p>
+        </div>
         <button
           onClick={runInvestigation}
           disabled={loading}
-          className="px-4 py-2 rounded-md bg-slate-900 text-white text-sm font-medium disabled:opacity-50"
+          className="px-4 py-2 rounded-md bg-brand-blue text-white text-sm font-medium disabled:opacity-50 hover:bg-brand-blue-dark transition-colors"
         >
           {loading ? "Running investigation…" : result ? "Re-run investigation" : "Run investigation"}
         </button>
       </div>
+
+      {loading && (
+        <div className="border border-slate-200 bg-slate-50 rounded-md p-4 space-y-2">
+          {(["prosecutor", "defense", "adjudicator"] as const).map((s, i) => {
+            const isPast = stageProgress > i;
+            const isCurrent = stageProgress === i;
+            return (
+              <div key={s} className="flex items-center gap-2 text-sm">
+                <span
+                  className={`w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] transition-colors ${
+                    isPast ? "bg-emerald-500 text-white" : isCurrent ? "bg-brand-blue text-white animate-pulse" : "bg-slate-200 text-slate-400"
+                  }`}
+                >
+                  {isPast ? "✓" : ""}
+                </span>
+                <span className={isPast || isCurrent ? "text-slate-800" : "text-slate-400"}>{STAGE_LABEL[s]}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {error && (
         <div className="border border-red-300 bg-red-50 text-red-800 text-sm rounded-md p-3">{error}</div>
       )}
 
       {result && (
-        <>
+        <div className="space-y-6 animate-[fadeIn_0.3s_ease-in]">
           <div className="flex flex-wrap items-center gap-3">
             <span className={`text-sm font-medium px-3 py-1 rounded-full border ${VERDICT_STYLE[result.verdict.verdict]}`}>
               {result.verdict.verdict.replace("_", " ").toUpperCase()}
@@ -99,7 +157,7 @@ export function InvestigationPanel({ caseId, role }: Props) {
               value={narrative}
               onChange={(e) => setNarrative(e.target.value)}
               rows={6}
-              className="w-full rounded-md border border-slate-300 p-3 text-sm text-slate-800"
+              className="w-full rounded-md border border-slate-300 p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue"
             />
           </div>
 
@@ -107,14 +165,14 @@ export function InvestigationPanel({ caseId, role }: Props) {
             <button
               onClick={() => handleDecision("approve")}
               disabled={!CAN_APPROVE.includes(role)}
-              className="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium disabled:opacity-40"
+              className="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium disabled:opacity-40 hover:bg-emerald-700 transition-colors"
             >
               Approve
             </button>
             <button
               onClick={() => handleDecision("reject")}
               disabled={!CAN_APPROVE.includes(role)}
-              className="px-4 py-2 rounded-md bg-slate-200 text-slate-800 text-sm font-medium disabled:opacity-40"
+              className="px-4 py-2 rounded-md bg-slate-200 text-slate-800 text-sm font-medium disabled:opacity-40 hover:bg-slate-300 transition-colors"
             >
               Reject
             </button>
@@ -123,7 +181,7 @@ export function InvestigationPanel({ caseId, role }: Props) {
             )}
             {approvalStatus && <span className="text-xs text-emerald-700">{approvalStatus}</span>}
           </div>
-        </>
+        </div>
       )}
     </div>
   );

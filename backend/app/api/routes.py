@@ -6,14 +6,21 @@ auto-executes an action — 'approve' is a separate, explicit human step.
 """
 from __future__ import annotations
 
+import logging
+
 from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, Field
 
+from app.agents.chat import ask_precedent_question
 from app.agents.pipeline import investigate_case
-from app.cases import build_case_context, get_case_detail, list_cases
+from app.agents.suggested_questions import get_suggested_questions, resolve_question_text
+from app.cases import build_case_context, get_case_detail, list_alerts, list_cases
 from app.llm.client import get_llm_client
 from app.security import audit
 from app.security.pii import mask
+from app import knowledge
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -45,10 +52,21 @@ class ApproveRequest(BaseModel):
     note: str = ""
 
 
+class ChatRequest(BaseModel):
+    question: str = ""
+    question_id: str | None = None
+
+
 @router.get("/cases")
 async def get_cases(x_demo_role: str | None = Header(default=None)):
     _require_role(x_demo_role)
     return {"cases": list_cases()}
+
+
+@router.get("/alerts")
+async def get_alerts(x_demo_role: str | None = Header(default=None)):
+    _require_role(x_demo_role)
+    return {"alerts": list_alerts()}
 
 
 @router.get("/cases/{case_id}")
@@ -96,6 +114,25 @@ async def investigate(case_id: str, x_demo_role: str | None = Header(default=Non
         },
     )
 
+    try:
+        key_claims = [c["statement"] for c in result.prosecutor.get("claims", []) + result.defense.get("claims", [])]
+        knowledge.record_investigation(
+            case_id=case_id,
+            typology=get_case_detail(case_id)["typology_guess"],
+            verdict=result.verdict["verdict"],
+            confidence=result.verdict["confidence"],
+            flagged_for_review=result.flagged_for_review,
+            narrative=result.verdict["narrative"],
+            key_claims=key_claims,
+            citations=result.verdict.get("citations", []),
+            actor=actor,
+        )
+    except Exception:
+        # The knowledge base is a secondary search index, not the
+        # compliance-critical path — a failure here must never break the
+        # actual investigation response the investigator is waiting on.
+        logger.warning("Failed to record knowledge entry for %s", case_id, exc_info=True)
+
     return InvestigateResponse(
         case_id=case_id,
         prosecutor=result.prosecutor,
@@ -119,6 +156,19 @@ async def approve(case_id: str, body: ApproveRequest, x_demo_role: str | None = 
         actor=actor,
         payload={"note": body.note},
     )
+
+    try:
+        detail = get_case_detail(case_id)
+        knowledge.record_decision(
+            case_id=case_id,
+            typology=detail["typology_guess"] if detail else "unknown",
+            decision=body.decision,
+            narrative=body.note,
+            actor=actor,
+        )
+    except Exception:
+        logger.warning("Failed to record knowledge decision entry for %s", case_id, exc_info=True)
+
     return {"status": "recorded"}
 
 
@@ -126,3 +176,49 @@ async def approve(case_id: str, body: ApproveRequest, x_demo_role: str | None = 
 async def get_audit_trail(case_id: str, x_demo_role: str | None = Header(default=None)):
     _require_role(x_demo_role)
     return {"case_id": case_id, "trail": audit.get_trail(case_id)}
+
+
+@router.get("/cases/{case_id}/chat/suggested-questions")
+async def get_chat_suggestions(case_id: str, x_demo_role: str | None = Header(default=None)):
+    _require_role(x_demo_role)
+    detail = get_case_detail(case_id)
+    if detail is None:
+        raise HTTPException(status_code=404, detail=f"Case {case_id!r} not found.")
+    return {"questions": get_suggested_questions(detail["typology_guess"])}
+
+
+@router.post("/cases/{case_id}/chat")
+async def chat(case_id: str, body: ChatRequest, x_demo_role: str | None = Header(default=None)):
+    # Read-only reference tool available to every role — not an approval
+    # action, so no extra role gate beyond the standard one.
+    _require_role(x_demo_role)
+
+    detail = get_case_detail(case_id)
+    if detail is None:
+        raise HTTPException(status_code=404, detail=f"Case {case_id!r} not found.")
+
+    question = body.question.strip()
+    if body.question_id:
+        resolved = resolve_question_text(detail["typology_guess"], body.question_id)
+        if resolved is None:
+            raise HTTPException(status_code=400, detail=f"Unknown question_id {body.question_id!r} for this case's typology.")
+        question = resolved
+    if not question:
+        raise HTTPException(status_code=400, detail="question or a valid question_id is required.")
+
+    llm = get_llm_client()
+    try:
+        result = await ask_precedent_question(llm, case_id=case_id, question=question, question_id=body.question_id)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    return {
+        "case_id": case_id,
+        "question": question,
+        "answer": result.answer,
+        "citations": result.citations,
+        "confidence": result.confidence,
+        "source": result.source,
+        "unverified_case_ids": result.unverified_case_ids,
+        "precedent_case_ids_considered": result.precedent_case_ids_considered,
+    }

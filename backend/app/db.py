@@ -90,8 +90,12 @@ def connect() -> sqlite3.Connection:
 
 
 def reset_case_data(conn: sqlite3.Connection) -> None:
-    """Wipes generated/derived data only — never touches audit_log, so
-    regenerating the demo dataset never erases the audit trail's history.
+    """Wipes generated/derived data only — never touches audit_log or
+    knowledge_entries (see app/knowledge.py), so regenerating the demo
+    dataset never erases the audit trail or the accumulated precedent
+    knowledge base. Safe because data/generate_dataset.py uses a fixed
+    random seed, so case_ids stay stable across regenerations — old
+    knowledge_entries rows keyed by case_id remain valid.
     """
     for table in ["case_alerts", "case_accounts", "cases", "alerts", "transactions", "client_profiles", "accounts"]:
         conn.execute(f"DELETE FROM {table}")

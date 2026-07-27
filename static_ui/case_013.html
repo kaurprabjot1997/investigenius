@@ -4,7 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>case_013 — InvestiGenius</title>
-<link rel="stylesheet" href="styles.css">
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+header {
+  border-bottom: 4px solid #FFC72C;
+  background: #0033A0;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .brand { font-weight: 600; color: #fff; }
+header .snapshot-tag {
+  font-size: 12px;
+  color: #e2e8f0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+.back-link { font-size: 14px; color: #64748b; text-decoration: none; }
+.back-link:hover { color: #1e293b; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-tile { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+.stat-value { font-size: 28px; font-weight: 600; margin-top: 4px; }
+.stat-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.stat-value.accent-red { color: #b91c1c; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.card-table { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+.card-table thead { background: #f8fafc; color: #64748b; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; }
+.card-table th, .card-table td { text-align: left; padding: 10px 14px; }
+.card-table tbody tr { border-top: 1px solid #f1f5f9; }
+.card-table tbody tr.linked:hover { background: #f8fafc; }
+.card-table td a { color: #1e40af; text-decoration: none; font-weight: 500; }
+.card-table td a:hover { text-decoration: underline; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 999px; border: 1px solid; }
+.badge-red { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.badge-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.badge-emerald { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.badge-slate { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-title { font-size: 18px; font-weight: 600; margin: 0; }
+.page-sub { font-size: 13px; color: #64748b; margin: 4px 0 0; text-transform: capitalize; }
+
+.graph-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+.graph-card svg { display: block; width: 100%; height: auto; background: #fff; }
+.legend { display: flex; gap: 16px; padding: 8px 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.note-banner { border: 1px solid #fde68a; background: #fffbeb; color: #78350f; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+.info-banner { border: 1px solid #bae6fd; background: #f0f9ff; color: #0c4a6e; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+
+.section-label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; font-weight: 600; margin: 24px 0 10px; }
+
+.arg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.arg-card { background: #fff; border-radius: 8px; padding: 16px; border: 1px solid #e2e8f0; }
+.arg-card.prosecutor { border-color: #fecaca; }
+.arg-card.defense { border-color: #bfdbfe; }
+.arg-card h3 { margin: 0 0 8px; font-size: 13px; }
+.arg-card p { font-size: 13px; color: #334155; margin: 0 0 10px; }
+.claim { font-size: 12px; color: #475569; border-top: 1px solid #f1f5f9; padding-top: 8px; margin-top: 8px; }
+.cite { margin-left: 6px; font-family: ui-monospace, monospace; background: #f1f5f9; color: #64748b; border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+
+.narrative-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.6; color: #1e293b; margin-bottom: 24px; }
+.verdict-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+.audit-entry { background: #fff; border-bottom: 1px solid #f1f5f9; padding: 14px; font-size: 13px; }
+.audit-entry:last-child { border-bottom: none; }
+.audit-entry .top { display: flex; justify-content: space-between; }
+.audit-entry .actor { color: #64748b; font-size: 12px; margin-top: 2px; }
+.audit-entry pre { background: #f8fafc; border-radius: 6px; padding: 8px; font-size: 11px; margin: 8px 0 0; overflow-x: auto; }
+.audit-entry .hash { font-size: 10px; color: #94a3b8; margin-top: 6px; font-family: ui-monospace, monospace; word-break: break-all; }
+
+.hero { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+.hero h1 { margin: 0 0 8px; font-size: 22px; }
+.hero p { color: #475569; font-size: 14px; line-height: 1.6; margin: 0; }
+.link-list { list-style: none; padding: 0; margin: 0; }
+.link-list li { margin-bottom: 8px; }
+.link-list a { color: #1e40af; text-decoration: none; font-size: 14px; }
+.link-list a:hover { text-decoration: underline; }
+footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 24px; }
+
+</style>
 </head>
 <body>
 <header>
@@ -41,7 +136,39 @@
 <tbody><tr><td class='mono'>TXN-0116</td><td class='mono'>ACCT-2110</td><td class='mono'>ACCT-2111</td><td>$5049.45</td><td>2026-07-23T21:01:33.371107</td></tr></tbody>
 </table>
 
-<div class="note-banner">No recorded AI investigation for this case in this snapshot — only case_001 has a pre-recorded fixture.</div>
+<div class="section-label">AI Investigation (cached fixture — recorded during development)</div>
+<div class="verdict-row">
+  <span class="badge badge-emerald">CLOSE</span>
+  <span>Confidence: 78%</span>
+  <span class="badge badge-slate">Source: replayed (cached) response</span>
+</div>
+<div class="arg-grid">
+<div class="arg-card prosecutor">
+<h3>Prosecutor</h3>
+<p>The evidence available for case_013 is minimal and does not support a strong suspicious activity case. A single transfer of $5,049.45 (TXN-0116) between two personal accounts (ACCT-2110 and ACCT-2111) triggered a routine monitoring alert (ALERT-0116) for an "elevated" amount, but there is no corroborating evidence of structuring, layering, rapid movement of funds, use of shell entities, or other network-level red flags. The graph risk score is low (10.0/100), and no typology was flagged by the system. Both accounts have digital banking enrollment and plausible KYC profiles (long tenure for ACCT-2110, moderate tenure for ACCT-2111), with no adverse KYC notes on file. Absent additional transactions, velocity, or counterparty risk indicators, this case presents only weak, circumstantial grounds for suspicion.</p>
+<div class="claim">A single transfer of $5,049.45 from ACCT-2110 to ACCT-2111 was flagged by routine monitoring as an elevated single transfer amount, which is the sole basis for the alert.<span class="cite">TXN-0116</span></div><div class="claim">The alert on ACCT-2110 was generated purely from routine monitoring thresholds rather than any pattern of repeated or structured transfers, limiting the strength of the suspicion case.<span class="cite">ALERT-0116</span></div><div class="claim">ACCT-2110 has a long client tenure (23.7 years) and no adverse KYC notes, which reduces (but does not eliminate) the likelihood that this single transfer represents illicit activity.<span class="cite">ACCT-2110</span></div><div class="claim">ACCT-2111, the receiving account, is a personal account with a shorter tenure (7.0 years) and no adverse KYC notes, providing no independent corroboration of suspicious receipt of funds.<span class="cite">ACCT-2111</span></div>
+</div>
+<div class="arg-card defense">
+<h3>Defense</h3>
+<p>The case involves a single alerted transaction (TXN-0116) between two long-tenured individual retail accounts. Given the low graph risk score (10/100), no adverse KYC findings, and the small, one-off nature of the transfer, the pattern is consistent with a routine personal fund transfer rather than any illicit typology.</p>
+<div class="claim">ACCT-2110 has a 23.7-year banking tenure with no adverse KYC notes, indicating an established, long-standing retail customer rather than a newly opened account typically associated with layering schemes.<span class="cite">ACCT-2110</span></div><div class="claim">ACCT-2111 similarly has no adverse KYC notes and is a 7-year tenured individual customer, consistent with a genuine personal account rather than a shell or mule account.<span class="cite">ACCT-2111</span></div><div class="claim">The single transaction TXN-0116 for $5,049.45 is a one-time transfer, not part of a structured or repetitive pattern (e.g., smurfing or layering), which would typically involve multiple smaller transactions across many accounts.<span class="cite">TXN-0116</span></div><div class="claim">Both accounts belong to individuals residing in CA with modest, similar income brackets ($20K-$40K), and one account holder (ACCT-2111) is a homemaker — a profile consistent with intra-family or personal support transfers (e.g., a spouse or relative sending household funds), which is a common innocent explanation for transfers between two personal accounts of similar demographic profile.<span class="cite">ACCT-2111</span></div><div class="claim">The alert was generated through routine monitoring for an 'elevated single transfer' rather than any suspicious-pattern-specific rule (e.g., structuring, rapid movement of funds, or high-risk jurisdiction flags), suggesting this is a standard threshold-based alert on an otherwise unremarkable transaction.<span class="cite">ALERT-0116</span></div><div class="claim">The overall network graph risk score of 10.0/100 is very low, indicating the transaction network shows minimal indicators of coordinated illicit activity such as fan-in/fan-out patterns, circular flows, or high-risk counterparties.<span class="cite">case_013</span></div>
+</div>
+</div>
+<div class="section-label">Draft narrative (for investigator review, not a final determination)</div>
+<div class="narrative-box">This case rests on a single transaction (TXN-0116, $5,049.45, ACCT-2110 -> ACCT-2111) that triggered a routine "elevated single transfer" monitoring alert (ALERT-0116). Both prosecution and defense agree there is no corroborating evidence of structuring, layering, rapid fund movement, or shell-entity involvement.
+
+Key factors supporting closure:
+- Graph risk score is low (10.0/100), and no typology was flagged by the system for case_013.
+- Both accounts are long-tenured individual retail customers (ACCT-2110: 23.7 years; ACCT-2111: 7.0 years) with no adverse KYC notes on file.
+- The transfer is a single, one-off event rather than part of a repeated or structured pattern; similar demographic/income profiles (CA residence, $20K-$40K income) and ACCT-2111's homemaker status are consistent with an innocent intra-family or household support transfer, though this is inferential and not confirmed by any documentation.
+- The alert derives purely from a routine amount threshold, not a pattern-specific typology rule.
+
+Countervailing considerations (why confidence is not higher):
+- KYC notes are listed as "none on file" for both accounts, which is an absence of information rather than a positive confirmation of legitimacy — it does not fully rule out risk.
+- No purpose-of-transfer documentation or source-of-funds evidence is present to affirmatively verify the innocent explanation (e.g., no evidence confirming this was a family/spousal transfer).
+- A single elevated transfer alone is thin evidentiary ground either way; while it does not meet a threshold for escalation, this is a low-information case overall.
+
+On balance, the absence of any corroborating suspicious indicators, the low graph risk score, clean KYC history, and single/non-repetitive nature of the transaction support closing this alert as a false/low-value positive. Recommend closure with standard documentation, subject to human investigator review given the thinness of the underlying record (no stated purpose of transfer, no source-of-funds verification).</div>
 </div>
 <footer>Static snapshot generated from live dataset — not connected to a running backend. See TEAM_BRIEFING.md for the full write-up.</footer>
 </body>

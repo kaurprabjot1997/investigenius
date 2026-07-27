@@ -4,7 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>case_007 — InvestiGenius</title>
-<link rel="stylesheet" href="styles.css">
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+header {
+  border-bottom: 4px solid #FFC72C;
+  background: #0033A0;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .brand { font-weight: 600; color: #fff; }
+header .snapshot-tag {
+  font-size: 12px;
+  color: #e2e8f0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+.back-link { font-size: 14px; color: #64748b; text-decoration: none; }
+.back-link:hover { color: #1e293b; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-tile { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+.stat-value { font-size: 28px; font-weight: 600; margin-top: 4px; }
+.stat-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.stat-value.accent-red { color: #b91c1c; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.card-table { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+.card-table thead { background: #f8fafc; color: #64748b; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; }
+.card-table th, .card-table td { text-align: left; padding: 10px 14px; }
+.card-table tbody tr { border-top: 1px solid #f1f5f9; }
+.card-table tbody tr.linked:hover { background: #f8fafc; }
+.card-table td a { color: #1e40af; text-decoration: none; font-weight: 500; }
+.card-table td a:hover { text-decoration: underline; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 999px; border: 1px solid; }
+.badge-red { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.badge-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.badge-emerald { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.badge-slate { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-title { font-size: 18px; font-weight: 600; margin: 0; }
+.page-sub { font-size: 13px; color: #64748b; margin: 4px 0 0; text-transform: capitalize; }
+
+.graph-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+.graph-card svg { display: block; width: 100%; height: auto; background: #fff; }
+.legend { display: flex; gap: 16px; padding: 8px 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.note-banner { border: 1px solid #fde68a; background: #fffbeb; color: #78350f; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+.info-banner { border: 1px solid #bae6fd; background: #f0f9ff; color: #0c4a6e; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+
+.section-label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; font-weight: 600; margin: 24px 0 10px; }
+
+.arg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.arg-card { background: #fff; border-radius: 8px; padding: 16px; border: 1px solid #e2e8f0; }
+.arg-card.prosecutor { border-color: #fecaca; }
+.arg-card.defense { border-color: #bfdbfe; }
+.arg-card h3 { margin: 0 0 8px; font-size: 13px; }
+.arg-card p { font-size: 13px; color: #334155; margin: 0 0 10px; }
+.claim { font-size: 12px; color: #475569; border-top: 1px solid #f1f5f9; padding-top: 8px; margin-top: 8px; }
+.cite { margin-left: 6px; font-family: ui-monospace, monospace; background: #f1f5f9; color: #64748b; border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+
+.narrative-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.6; color: #1e293b; margin-bottom: 24px; }
+.verdict-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+.audit-entry { background: #fff; border-bottom: 1px solid #f1f5f9; padding: 14px; font-size: 13px; }
+.audit-entry:last-child { border-bottom: none; }
+.audit-entry .top { display: flex; justify-content: space-between; }
+.audit-entry .actor { color: #64748b; font-size: 12px; margin-top: 2px; }
+.audit-entry pre { background: #f8fafc; border-radius: 6px; padding: 8px; font-size: 11px; margin: 8px 0 0; overflow-x: auto; }
+.audit-entry .hash { font-size: 10px; color: #94a3b8; margin-top: 6px; font-family: ui-monospace, monospace; word-break: break-all; }
+
+.hero { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+.hero h1 { margin: 0 0 8px; font-size: 22px; }
+.hero p { color: #475569; font-size: 14px; line-height: 1.6; margin: 0; }
+.link-list { list-style: none; padding: 0; margin: 0; }
+.link-list li { margin-bottom: 8px; }
+.link-list a { color: #1e40af; text-decoration: none; font-size: 14px; }
+.link-list a:hover { text-decoration: underline; }
+footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 24px; }
+
+</style>
 </head>
 <body>
 <header>
@@ -48,7 +143,32 @@
 </div><div class="actor">Full cycle completes within 24.0h.</div></div><div class="audit-entry"><div class="top">
 <strong>&#10003; [RT-3] Transferred amounts are similar in magnitude across hops, with no apparent economic purpose for the intermediate transfers</strong>
 </div><div class="actor">Hop amounts vary by less than 25%.</div></div></div>
-<div class="note-banner">No recorded AI investigation for this case in this snapshot — only case_001 has a pre-recorded fixture.</div>
+<div class="section-label">AI Investigation (cached fixture — recorded during development)</div>
+<div class="verdict-row">
+  <span class="badge badge-red">ESCALATE</span>
+  <span>Confidence: 62%</span>
+  <span class="badge badge-slate">Source: replayed (cached) response</span>
+</div>
+<div class="arg-grid">
+<div class="arg-card prosecutor">
+<h3>Prosecutor</h3>
+<p>The five accounts (ACCT-2054 through ACCT-2058) form a closed, rapid, same-magnitude transaction loop that returns funds to the originating account within 24 hours, meeting all three standardized round-tripping criteria (cyclical flow, short time window, similar hop amounts). Each account independently triggered a circular fund flow alert, and none of the account holders' profiles (homemakers, a retiree, and students with modest declared incomes) provide plausible economic justification for sequential transfers of $25K-$27K each. The absence of any KYC documentation across all five accounts further compounds the risk, strongly supporting a determination of suspicious round-tripping activity consistent with layering to obscure fund origin or manufacture transaction history.</p>
+<div class="claim">A closed five-hop transaction cycle exists returning funds to the originating account: ACCT-2054 -> ACCT-2055 -> ACCT-2056 -> ACCT-2057 -> ACCT-2058 -> ACCT-2054, indicating round-tripping rather than legitimate commerce.<span class="cite">TXN-0063</span></div><div class="claim">The cycle closes back to ACCT-2054 via TXN-0067, confirming funds returned to point of origin.<span class="cite">TXN-0067</span></div><div class="claim">All five hops occur within a 24-hour window (2026-07-12T09:00 to 2026-07-13T09:00), satisfying the short time-window criterion for coordinated circular movement (RT-2).<span class="cite">TXN-0063</span></div><div class="claim">Hop amounts range from $25,068.90 to $26,722.01, varying by less than 25% across all five transactions, consistent with layering designed to preserve value while obscuring origin (RT-3).<span class="cite">TXN-0064</span></div><div class="claim">Each account in the cycle triggered an individual circular fund flow alert, corroborating system-level detection of the round-tripping pattern across all five participants.<span class="cite">ALERT-0063</span></div><div class="claim">ACCT-2056 alert independently flags the same cyclical structure at the midpoint of the chain.<span class="cite">ALERT-0065</span></div><div class="claim">ACCT-2057 alert confirms circular flow involvement at the second-to-last hop.<span class="cite">ALERT-0066</span></div><div class="claim">ACCT-2055 alert confirms circular flow involvement at the first receiving hop.<span class="cite">ALERT-0064</span></div><div class="claim">ACCT-2058 alert confirms circular flow involvement at the final hop before funds return to origin.<span class="cite">ALERT-0067</span></div><div class="claim">None of the five personal accounts have any KYC notes on file, and none display an occupation or income profile (Homemaker, Retired, Student) that would economically justify sequential transfers of ~$25,000-$26,700 each within hours, undermining any legitimate business rationale for the fund movement.<span class="cite">ACCT-2057</span></div>
+</div>
+<div class="arg-card defense">
+<h3>Defense</h3>
+<p>While the automated round-tripping playbook mechanically matches all three criteria (closed loop, fast timing, similar amounts), the account holder profiles and transaction context are far more consistent with an innocent, close-knit family/household cash-flow pattern than with layering or wash-trading. All five accounts are personal (non-business) accounts held by long-tenured CA residents with modest, stable income bands and occupations (Homemaker, Retired, Student) typical of a single extended family circulating shared funds for bill-paying, rent/tuition timing, or caregiving support — not concealment of illicit proceeds.</p>
+<div class="claim">ACCT-2054 and ACCT-2056 are both listed as Homemaker occupation with long tenure (9.0 and 9.3 years) and similar CA residence, suggesting they are likely spouses or related family members who routinely move shared household funds between accounts rather than engaging in criminal layering.<span class="cite">ACCT-2054</span></div><div class="claim">ACCT-2057 and ACCT-2058 are both Students residing in CA, one with only 1.5 years tenure and the other with 13.3 years — consistent with a parent (long-tenure account) supporting a child's account (short-tenure) or siblings transferring tuition/living-expense money in a round-robin fashion, a common pattern for families managing shared educational expenses.<span class="cite">ACCT-2058</span></div><div class="claim">The retired individual on ACCT-2055 (income $20K-$40K) receiving and then quickly forwarding roughly the same amount ($25,068.90 out of $25,166.07 in) is consistent with a fixed-income relative acting as a pass-through for a family emergency fund or rotating savings arrangement, rather than a money-laundering intermediary, since no fee or spread is being extracted.<span class="cite">TXN-0064</span></div><div class="claim">The near-identical amounts across all five hops (approximately $25,000-$26,700, varying by less than 5%) are more consistent with a single lump sum (e.g., an inheritance, tax refund, insurance payout, or shared deposit for a large purchase like a car or family property) being sequentially moved through family members' accounts for safekeeping or convenience than with layering, which typically shows amount decay from fees/skimming.<span class="cite">TXN-0063</span></div><div class="claim">The full cycle completes within 24 hours across three separate overnight/business-hour windows (9am, 3pm, 9pm, 3am, 9am), a pattern consistent with a coordinated family decision (e.g., splitting an inheritance or settlement) executed via digital banking in a single day rather than deliberate obfuscation, especially since three of the five accounts are not even digitally enrolled and would need to coordinate manually, indicating pre-planned legitimate coordination.<span class="cite">TXN-0067</span></div><div class="claim">None of the accounts have any adverse KYC notes on file, and all are long-standing personal retail accounts (tenures ranging 1.5 to 13.3 years) with modest, verifiable income bands, none of which match typical shell-company or high-risk-entity profiles used in genuine round-tripping schemes to disguise fund origin.<span class="cite">ACCT-2055</span></div>
+</div>
+</div>
+<div class="section-label">Draft narrative (for investigator review, not a final determination)</div>
+<div class="narrative-box">Case case_007 presents a mechanically clean match to all three round_tripping playbook criteria: a closed five-hop cycle returning funds to the originating account (ACCT-2054 -> ACCT-2055 -> ACCT-2056 -> ACCT-2057 -> ACCT-2058 -> ACCT-2054, TXN-0063 through TXN-0067), completion of the full cycle within 24 hours (TXN-0063 at 2026-07-12T09:00 to TXN-0067 at 2026-07-13T09:00), and hop amounts varying by less than 25% (~$25,068.90 to $26,722.01, TXN-0064, TXN-0063). All five accounts independently triggered circular-flow alerts (ALERT-0063, ALERT-0064, ALERT-0065, ALERT-0066, ALERT-0067), which is a meaningful corroborating signal since detection fired at every node in the chain, not just once.
+
+The defense raises a plausible innocent-explanation narrative — that this could be a family group (homemakers, a retiree, students, all CA residents with varying tenure) moving a single lump sum (inheritance, tax refund, settlement) through personal accounts for convenience — and notes the absence of adverse KYC history and the modest/stable income profiles (ACCT-2054, ACCT-2055, ACCT-2057, ACCT-2058). This is a coherent alternative hypothesis, but it is inferential: there is no confirmed familial relationship, shared address, or documented source-of-funds evidence in the record to substantiate it. The "no fee/spread extracted" observation (TXN-0064) is consistent with either an innocent pass-through or a wash cycle designed to return capital intact — it does not discriminate well between the two hypotheses.
+
+Notably, the defense's own framing undercuts itself in one respect: it argues coordination occurred "despite" three accounts lacking digital banking enrollment (ACCT-2057, ACCT-2058), which actually raises the question of how those transfers were coordinated within tight overnight windows (21:00, 03:00) absent digital access — this is either evidence of manual/in-person coordination (plausible for family) or a point warranting further scrutiny rather than exculpation.
+
+On balance, the objective structural criteria (RT-1, RT-2, RT-3) are fully matched and corroborated by independent alerts at every hop, which is a strong pattern-based indicator warranting escalation for deeper investigation (e.g., source-of-funds documentation, confirmation of familial relationship, and KYC enhancement). However, the complete absence of adverse KYC history, the plausible family/pass-through narrative, and the lack of confirmed illicit predicate or beneficiary mismatch mean this should not be closed outright nor treated as high-confidence confirmed laundering. This is a case for escalation to a human investigator to obtain additional KYC/source-of-funds evidence (e.g., verify family relationship, request explanation for the lump sum, confirm no fee extraction across all hops) before final disposition.</div>
 </div>
 <footer>Static snapshot generated from live dataset — not connected to a running backend. See TEAM_BRIEFING.md for the full write-up.</footer>
 </body>

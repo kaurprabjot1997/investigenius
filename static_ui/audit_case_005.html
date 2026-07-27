@@ -4,7 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Audit — case_005 — InvestiGenius</title>
-<link rel="stylesheet" href="styles.css">
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+header {
+  border-bottom: 4px solid #FFC72C;
+  background: #0033A0;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .brand { font-weight: 600; color: #fff; }
+header .snapshot-tag {
+  font-size: 12px;
+  color: #e2e8f0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+.back-link { font-size: 14px; color: #64748b; text-decoration: none; }
+.back-link:hover { color: #1e293b; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-tile { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+.stat-value { font-size: 28px; font-weight: 600; margin-top: 4px; }
+.stat-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.stat-value.accent-red { color: #b91c1c; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.card-table { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+.card-table thead { background: #f8fafc; color: #64748b; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; }
+.card-table th, .card-table td { text-align: left; padding: 10px 14px; }
+.card-table tbody tr { border-top: 1px solid #f1f5f9; }
+.card-table tbody tr.linked:hover { background: #f8fafc; }
+.card-table td a { color: #1e40af; text-decoration: none; font-weight: 500; }
+.card-table td a:hover { text-decoration: underline; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 999px; border: 1px solid; }
+.badge-red { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.badge-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.badge-emerald { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.badge-slate { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-title { font-size: 18px; font-weight: 600; margin: 0; }
+.page-sub { font-size: 13px; color: #64748b; margin: 4px 0 0; text-transform: capitalize; }
+
+.graph-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+.graph-card svg { display: block; width: 100%; height: auto; background: #fff; }
+.legend { display: flex; gap: 16px; padding: 8px 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.note-banner { border: 1px solid #fde68a; background: #fffbeb; color: #78350f; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+.info-banner { border: 1px solid #bae6fd; background: #f0f9ff; color: #0c4a6e; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+
+.section-label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; font-weight: 600; margin: 24px 0 10px; }
+
+.arg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.arg-card { background: #fff; border-radius: 8px; padding: 16px; border: 1px solid #e2e8f0; }
+.arg-card.prosecutor { border-color: #fecaca; }
+.arg-card.defense { border-color: #bfdbfe; }
+.arg-card h3 { margin: 0 0 8px; font-size: 13px; }
+.arg-card p { font-size: 13px; color: #334155; margin: 0 0 10px; }
+.claim { font-size: 12px; color: #475569; border-top: 1px solid #f1f5f9; padding-top: 8px; margin-top: 8px; }
+.cite { margin-left: 6px; font-family: ui-monospace, monospace; background: #f1f5f9; color: #64748b; border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+
+.narrative-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.6; color: #1e293b; margin-bottom: 24px; }
+.verdict-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+.audit-entry { background: #fff; border-bottom: 1px solid #f1f5f9; padding: 14px; font-size: 13px; }
+.audit-entry:last-child { border-bottom: none; }
+.audit-entry .top { display: flex; justify-content: space-between; }
+.audit-entry .actor { color: #64748b; font-size: 12px; margin-top: 2px; }
+.audit-entry pre { background: #f8fafc; border-radius: 6px; padding: 8px; font-size: 11px; margin: 8px 0 0; overflow-x: auto; }
+.audit-entry .hash { font-size: 10px; color: #94a3b8; margin-top: 6px; font-family: ui-monospace, monospace; word-break: break-all; }
+
+.hero { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+.hero h1 { margin: 0 0 8px; font-size: 22px; }
+.hero p { color: #475569; font-size: 14px; line-height: 1.6; margin: 0; }
+.link-list { list-style: none; padding: 0; margin: 0; }
+.link-list li { margin-bottom: 8px; }
+.link-list a { color: #1e40af; text-decoration: none; font-size: 14px; }
+.link-list a:hover { text-decoration: underline; }
+footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 24px; }
+
+</style>
 </head>
 <body>
 <header>
@@ -14,7 +109,41 @@
 <div class="container">
 <a class="back-link" href="case_005.html">&larr; Back to case_005</a>
 <div class="page-header" style="margin-top:12px"><h1 class="page-title">Audit trail — case_005</h1></div>
-<div class="note-banner">No audit actions recorded for this case yet.</div>
+<div class="card-table" style="padding:0"><div class="audit-entry">
+  <div class="top"><strong>human reject</strong><span>2026-07-27T00:38:25.688Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "note": "Reviewed the 20-counterparty fan-out pattern manually. Hub account holder confirmed as a small peer-to-peer marketplace seller with legitimate high-frequency buyer payments; transaction memos and counterparty KYC corroborate this. Closing without escalation."
+}</pre>
+  <div class="hash">hash: 19ab9cb6de8bf5968d80681b0aae9083e3118f469fc9678ee3c2fcfaf69b60b3</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T00:40:23.752Z</span></div>
+  <div class="actor">by senior_investigator</div>
+  <pre>{
+  "confidence": 0.62,
+  "flagged_for_review": false,
+  "uncited_claim_count": 0,
+  "verdict": "escalate"
+}</pre>
+  <div class="hash">hash: af804864c2a9eb386aeb1c6325f22b84d8db40ce09bc851a895bfffa94adbebd</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>investigate</strong><span>2026-07-27T01:10:30.591Z</span></div>
+  <div class="actor">by compliance_officer</div>
+  <pre>{
+  "confidence": 0.62,
+  "flagged_for_review": false,
+  "uncited_claim_count": 0,
+  "verdict": "escalate"
+}</pre>
+  <div class="hash">hash: bd9fec3f72e08f8a2d99a6ff446b41c090af1caae341bcd19bd0aac1195dd3bf</div>
+</div><div class="audit-entry">
+  <div class="top"><strong>human reject</strong><span>2026-07-27T01:11:18.048Z</span></div>
+  <div class="actor">by compliance_officer</div>
+  <pre>{
+  "note": "SUMMARY: ACCT-2072 meets all three standardized mule_hub playbook criteria: (MH-1) 16 distinct counterparties (ACCT-2073 through ACCT-2088) within a ~2.5-day window, well above the 8+ threshold; (MH-2) near-even inbound/outbound balance (8 in / 8 out, alternating every 4 hours per TXN-0080 through TXN-0095); and (MH-3) short 0.9-year tenure against disproportionate volume ($28,647), which is explicitly flagged against KYC notes stating \"low expected activity\" for ACCT-2072.\n\nPROSECUTION CASE: The prosecutor's strongest points are structural \u2014 the strict alternating inbound/outbound cadence at regular 4-hour intervals around the clock (TXN-0080\u20130095), the sheer counterparty count (16, per ALERT-0080 through ALERT-0095, each independently triggering high-frequency alerts), and the mismatch between account tenure/KYC expectations and actual volume (ACCT-2072). This is a facially strong match to the mule_hub typology definition and the automated behavioral signal corroborates it.\n\nDEFENSE CASE: The defense offers a plausible alternative narrative \u2014 a peer-to-peer collection/disbursement role (ROSCA, bill-splitting, event fund) \u2014 supported by: all counterparties being CA-resident individuals rather than shell/foreign entities (ACCT-2073 through ACCT-2088), modest and organically varying transaction amounts ($690\u2013$2,880, per TXN-0083), and diverse but plausible personal-account profiles (students, homemakers, retirees, salaried employees per ACCT-2079). However, this defense is largely speculative \u2014 there is no direct evidence (e.g., memo lines, external corroboration, prior account history) supporting a ROSCA, bill-split, or event-fund explanation. It is a plausible innocent story, not a proven one.\n\nWEIGHING: The mechanical/automated cadence (exactly 4-hour intervals, strictly alternating in/out, round-the-clock including odd hours like 01:00, 05:00, 09:00) is unusual even for an organized informal collector \u2014 real-world social/organizer behavior is rarely this metronomic, which cuts against the benign explanation and somewhat supports the prosecution's \"scripted\" characterization. Conversely, the defense's point about localized, non-shell CA individual counterparties with diverse legitimate profiles is a meaningful mitigant against a classic professional mule network (which usually uses synthetic or geographically dispersed accounts). Neither side has hard evidence (e.g., beneficial ownership links, device/IP overlap, external SAR filings on counterparties) to conclusively settle intent. The KYC mismatch (low expected activity vs. actual disproportionate volume) is a genuine red flag that KYC/EDD review should resolve, and this is exactly the kind of case where playbook-driven automated detection should trigger human follow-up rather than autonomous closure.\n\nVERDICT RATIONALE: Given the account satisfies all three standardized mule_hub criteria, exhibits an unusually rigid/mechanical transaction cadence, and shows a clear KYC-versus-volume mismatch, this warrants escalation for further investigation (e.g., KYC refresh, counterparty relationship confirmation, source-of-funds inquiry) rather than closure. However, the defense's alternative explanation is credible enough, and the network is entirely local/individual (not shell/synthetic), that confidence in outright criminal mule activity is moderate, not high."
+}</pre>
+  <div class="hash">hash: ee3df68b89c154e5f325625a5c37be7fceea25e374ac1bd8b49a055504a06691</div>
+</div></div>
 </div>
 <footer>Static snapshot generated from live dataset — not connected to a running backend. See TEAM_BRIEFING.md for the full write-up.</footer>
 </body>

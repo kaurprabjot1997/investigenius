@@ -50,26 +50,44 @@ class AnthropicClient(LLMClient):
         response_schema: dict[str, Any],
         cache_key: str,
     ) -> LLMResponse:
-        message = await self._client.messages.create(
-            model=self._model,
-            max_tokens=2048,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_prompt}],
-            tools=[
-                {
-                    "name": "emit_result",
-                    "description": "Return the structured investigation result.",
-                    "input_schema": response_schema,
-                }
-            ],
-            tool_choice={"type": "tool", "name": "emit_result"},
-        )
-        tool_use = next(b for b in message.content if b.type == "tool_use")
-        response = LLMResponse(content=tool_use.input, model=self._model, source="live")
-        # Every live response is persisted as a fixture — this is what makes
-        # offline replay mode possible later without a separate recording step.
-        save_fixture(cache_key, response.model_dump())
-        return response
+        required_fields = response_schema.get("required", [])
+        last_error: Exception | None = None
+
+        # Forced tool-use isn't a hard schema guarantee — occasionally the
+        # model returns a tool_use.input missing a required field (seen in
+        # practice: claims/citations arrays collapsed into the adjacent
+        # string field, with stray tag-like text appended). That's silent
+        # data corruption downstream (frontend .map() on undefined, citation
+        # validator treating a real argument as having zero claims) unless
+        # it's caught here. One bounded retry, then fail loudly rather than
+        # ever caching or returning a response missing required fields.
+        for attempt in range(3):
+            message = await self._client.messages.create(
+                model=self._model,
+                max_tokens=6144,
+                system=system_prompt,
+                messages=[{"role": "user", "content": user_prompt}],
+                tools=[
+                    {
+                        "name": "emit_result",
+                        "description": "Return the structured investigation result.",
+                        "input_schema": response_schema,
+                    }
+                ],
+                tool_choice={"type": "tool", "name": "emit_result"},
+            )
+            tool_use = next(b for b in message.content if b.type == "tool_use")
+            missing = [f for f in required_fields if f not in tool_use.input]
+            if not missing:
+                response = LLMResponse(content=tool_use.input, model=self._model, source="live")
+                # Every live response is persisted as a fixture — this is
+                # what makes offline replay mode possible later without a
+                # separate recording step.
+                save_fixture(cache_key, response.model_dump())
+                return response
+            last_error = ValueError(f"Model response for {cache_key!r} missing required field(s): {missing} (attempt {attempt + 1}/3)")
+
+        raise RuntimeError(str(last_error))
 
 
 class EnterpriseGatewayClient(LLMClient):

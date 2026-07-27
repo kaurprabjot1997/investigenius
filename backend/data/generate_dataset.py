@@ -21,7 +21,59 @@ from data.profiles import make_profile
 
 random.seed(42)
 
+# Independent generator, seeded separately, used only for picking alert
+# reason text. Deliberately NOT drawing from the shared `random` module used
+# everywhere else in this file (amounts, timestamps, tenure bias) — that
+# module's call sequence is what makes every non-case_001 case's generated
+# data deterministic and reproducible, including the case_005/007/013
+# fixtures already recorded against it (real API credits were spent on
+# those). Interleaving new random.choice() calls into that shared sequence
+# would shift every uniform() draw after them, silently changing transaction
+# amounts/timestamps/profiles and invalidating those fixtures. A second,
+# separately-seeded Random instance adds reason variety with zero effect on
+# the rest of the sequence.
+_reason_rng = random.Random(1337)
+
 BASE_DATE = datetime(2026, 7, 10, 9, 0)
+
+# Reason-text variety for the alerts queue — a real AML monitoring system
+# fires many differently-worded rules even for the same underlying typology,
+# and case_001's exact reason strings are left untouched (make_fixture_
+# matched_structuring_scheme below) since they're baked into the already-
+# recorded LLM fixture narratives.
+STRUCTURING_FEEDER_REASONS = [
+    "Sub-$10,000 transfer near CTR threshold",
+    "Transaction structured to avoid reporting threshold",
+    "Multiple sub-threshold deposits detected",
+    "Deposit pattern consistent with structuring",
+]
+STRUCTURING_CASHOUT_REASONS = [
+    "Large same-day consolidated outflow",
+    "Rapid fund consolidation and external transfer",
+    "Same-day full-balance sweep to external account",
+]
+ROUND_TRIPPING_REASONS = [
+    "Circular fund flow detected",
+    "Potential layering — funds returned toward origin",
+    "Unusual round-trip transaction pattern",
+    "Sequential transfer loop flagged by network monitoring",
+]
+MULE_HUB_REASONS = [
+    "High-frequency third-party transfers",
+    "Unusual counterparty velocity",
+    "Potential money mule activity — high fan-out",
+    "Rapid pass-through transaction pattern",
+    "Account transacting with unusually broad counterparty network",
+]
+BENIGN_REASONS = [
+    "Routine monitoring — elevated single transfer",
+    "Transaction above dynamic account threshold",
+    "New payee — first-time transfer",
+    "Elevated transaction amount for account profile",
+    "Out-of-pattern transaction time flagged for review",
+    "Dormant account reactivation",
+    "Round-number transaction amount flagged for review",
+]
 
 
 def _ts(base: datetime, hours_offset: float) -> str:
@@ -66,11 +118,11 @@ def make_structuring_scheme(acc_ctr, txn_ctr, alert_ctr, n_feeders: int, base: d
         txn_id = f"TXN-{next(txn_ctr):04d}"
         ts = _ts(base, random.uniform(0, 40))
         transactions.append((txn_id, feeder, hub, round(amount, 2), ts))
-        alerts.append((f"ALERT-{next(alert_ctr):04d}", feeder, txn_id, "Sub-$10,000 transfer near CTR threshold", ts))
+        alerts.append((f"ALERT-{next(alert_ctr):04d}", feeder, txn_id, _reason_rng.choice(STRUCTURING_FEEDER_REASONS), ts))
     cashout_txn = f"TXN-{next(txn_ctr):04d}"
     ts = _ts(base, 44)
     transactions.append((cashout_txn, hub, ext, round(total, 2), ts))
-    alerts.append((f"ALERT-{next(alert_ctr):04d}", hub, cashout_txn, "Large same-day consolidated outflow", ts))
+    alerts.append((f"ALERT-{next(alert_ctr):04d}", hub, cashout_txn, _reason_rng.choice(STRUCTURING_CASHOUT_REASONS), ts))
     return accounts, transactions, alerts
 
 
@@ -85,7 +137,7 @@ def make_round_tripping_scheme(acc_ctr, txn_ctr, alert_ctr, cycle_len: int, base
         txn_id = f"TXN-{next(txn_ctr):04d}"
         ts = _ts(base, i * 6)
         transactions.append((txn_id, src, dst, leg_amount, ts))
-        alerts.append((f"ALERT-{next(alert_ctr):04d}", src, txn_id, "Circular fund flow detected", ts))
+        alerts.append((f"ALERT-{next(alert_ctr):04d}", src, txn_id, _reason_rng.choice(ROUND_TRIPPING_REASONS), ts))
     return accounts, transactions, alerts
 
 
@@ -103,7 +155,7 @@ def make_mule_hub_scheme(acc_ctr, txn_ctr, alert_ctr, n_counterparties: int, bas
             transactions.append((txn_id, cp, hub, amount, ts))
         else:
             transactions.append((txn_id, hub, cp, amount, ts))
-        alerts.append((f"ALERT-{next(alert_ctr):04d}", hub, txn_id, "High-frequency third-party transfers", ts))
+        alerts.append((f"ALERT-{next(alert_ctr):04d}", hub, txn_id, _reason_rng.choice(MULE_HUB_REASONS), ts))
     return accounts, transactions, alerts
 
 
@@ -117,7 +169,7 @@ def make_benign_noise(acc_ctr, txn_ctr, alert_ctr, n_pairs: int, base: datetime)
         txn_id = f"TXN-{next(txn_ctr):04d}"
         ts = _ts(base, random.uniform(0, 24 * 14))
         transactions.append((txn_id, a, b, amount, ts))
-        alerts.append((f"ALERT-{next(alert_ctr):04d}", a, txn_id, "Routine monitoring — elevated single transfer", ts))
+        alerts.append((f"ALERT-{next(alert_ctr):04d}", a, txn_id, _reason_rng.choice(BENIGN_REASONS), ts))
     return accounts, transactions, alerts
 
 

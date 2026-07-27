@@ -1,0 +1,22 @@
+{
+  "content": {
+    "answer": "Not really \u2014 none of the retrieved precedents are a close match to this mule_hub pattern. \n\nCase_005 shows a classic hub-and-spoke mule pattern: ACCT-2072 (a newly opened account, 0.9 years tenure, \"low expected activity per KYC\") transacted with 16 distinct counterparties over ~2 days, with roughly balanced inbound/outbound flows totaling $28,647 \u2014 all three standardized mule_hub playbook criteria (MH-1, MH-2, MH-3) matched. This is a strong, clean-cut typology match on its own criteria.\n\nHowever, looking at the retrieved precedents:\n- case_007 is a round-tripping case (circular flow among 5 accounts) \u2014 a different typology and different topology (circular vs. hub-and-spoke), though it shares the theme of no plausible legitimate purpose being found and being escalated. It's only loosely analogous as a \"no legitimate explanation \u2192 escalate\" precedent, not a direct match on pattern.\n- case_013 is the opposite situation \u2014 a single transaction between two long-tenured, established accounts consistent with income, which was closed out with no action. It's useful mainly as a contrast case (showing what a *non*-suspicious, tenure/income-consistent transaction looks like), not as support for this case.\n- case_001 is a structuring/layering case (near-threshold deposits consolidated into one account) \u2014 again a different mechanism (threshold evasion + layering) than the many-to-one/one-to-many hub pattern here, though both involve a central \"hub\" account.\n\nNone of these three precedents describes a prior mule_hub case with the same 8+ counterparty, balanced-flow, short-tenure signature we're checking against here. So while the current case is a well-supported match against the mule_hub playbook itself, I don't have a directly comparable prior case in the retrieved precedents to point to \u2014 I'd treat this as a fresh instance rather than one we've adjudicated before, and would recommend escalation based on the strength of the MH-1/MH-2/MH-3 matches rather than on precedent.",
+    "citations": [
+      {
+        "case_id": "case_007",
+        "note": "Different typology (round-tripping/circular flow) but similarly escalated due to no plausible legitimate purpose; only loosely analogous as a 'no innocent explanation' precedent."
+      },
+      {
+        "case_id": "case_013",
+        "note": "Contrasting example of a benign, tenure/income-consistent single transaction \u2014 helps illustrate what does NOT look like this case, not a supporting match."
+      },
+      {
+        "case_id": "case_001",
+        "note": "Involves a central hub account receiving from many accounts then consolidating outward, but mechanism is structuring/threshold evasion rather than balanced bidirectional mule hub activity."
+      }
+    ],
+    "confidence": 0.75
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

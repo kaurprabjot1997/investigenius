@@ -1,0 +1,18 @@
+{
+  "content": {
+    "answer": "Based on what's actually available, I can't point to a directly comparable precedent for this structuring pattern. The current case (case_001) matches all four criteria on the standardized structuring playbook checklist: 12 feeder accounts each sending a single near-threshold transfer (85-100% of the $10K CTR limit) into ACCT-9000 within a 33-hour window, followed by a rapid consolidated outbound sweep to an external account (EXT-5000) just 7 hours after the last inbound transfer. That combination \u2014 many one-off feeder accounts, tight clustering, and fast layering out \u2014 is a textbook structuring/smurfing signature and the graph risk score of 100/100 reflects that.\n\nHowever, neither of the two retrieved precedents is a good match for this typology:\n- case_005 was a mule_hub fan-out case (money moving in many directions from one hub) that was ultimately explained by legitimate marketplace-seller activity and rejected/closed without escalation. That's a different structural pattern (fan-out vs. fan-in/structuring) and a different resolution rationale (corroborated legitimate business use), so it doesn't tell us what typically happens with structuring cases like this one.\n- case_013 was a single, low-risk transaction between long-tenured accounts with no structuring indicators at all \u2014 essentially a non-event that was approved after minimal review. It's not analogous to a 12-account structuring pattern with a same-day consolidation sweep.\n\nGiven the lack of on-point precedent, I don't have a reliable basis to say what the \"typical outcome\" is for cases matching this specific structuring fingerprint (STR-1 through STR-4 all matched, near-perfect risk score). I'd recommend treating this as a high-priority escalation on its own merits \u2014 the pattern strongly resembles classic smurfing to evade CTR reporting \u2014 rather than inferring an outcome from the two precedents provided, since both differ materially in typology and fact pattern. If you have access to other closed structuring cases with similar STR-1\u2013STR-4 matches, those would be far more informative than the ones retrieved here.",
+    "citations": [
+      {
+        "case_id": "case_005",
+        "note": "Different typology (mule_hub fan-out) and different resolution driver (legitimate business activity confirmed); illustrates a case where a suspicious-looking pattern was explained away, but is not structurally analogous to this fan-in structuring case."
+      },
+      {
+        "case_id": "case_013",
+        "note": "Low-risk single transaction with no structuring indicators, approved after minimal review; not comparable to the multi-account near-threshold structuring pattern seen here."
+      }
+    ],
+    "confidence": 0.25
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

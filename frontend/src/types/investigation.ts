@@ -85,6 +85,12 @@ export interface Alert {
   raised_at: string;
 }
 
+export interface QueuedAlert extends Alert {
+  case_id: string | null;
+  typology_guess: Typology | null;
+  risk_score: number | null;
+}
+
 export interface PlaybookItem {
   id: string;
   criterion: string;
@@ -117,4 +123,25 @@ export interface AuditEntry {
   payload: Record<string, unknown>;
   timestamp: string;
   row_hash: string;
+}
+
+export interface SuggestedQuestion {
+  question_id: string;
+  text: string;
+}
+
+export interface ChatCitation {
+  case_id: string;
+  note: string;
+}
+
+export interface ChatAnswer {
+  case_id: string;
+  question: string;
+  answer: string;
+  citations: ChatCitation[];
+  confidence: number;
+  source: "live" | "cache";
+  unverified_case_ids: string[];
+  precedent_case_ids_considered: string[];
 }

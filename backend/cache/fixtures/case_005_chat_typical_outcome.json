@@ -1,0 +1,18 @@
+{
+  "content": {
+    "answer": "Based on what's provided, I don't have a directly relevant precedent for a mule_hub typology case to answer \"what's the typical outcome\" with confidence.\n\nThe current case (case_005) is a strong, clean match to the mule_hub playbook: ACCT-2072 meets all three standardized criteria \u2014 16 distinct counterparties (MH-1), balanced inbound/outbound flow inconsistent with normal income/expense patterns (MH-2), and very short tenure (0.9y) relative to volume passing through ($28,647) (MH-3). This is a textbook hub-and-spoke mule pattern: a newly opened, low-expected-activity account receiving and immediately redistributing funds to/from 16 separate low-tenure, mostly non-digitally-enrolled counterparties in rapid, evenly-spaced succession (every 4 hours) \u2014 consistent with a money mule collection/disbursement point.\n\nHowever, neither of the two retrieved precedents actually addresses this typology:\n- case_013 is a \"none\" typology, single transaction between long-tenured accounts consistent with income \u2014 not analogous (different pattern, different verdict rationale).\n- case_001 is a structuring typology (near-threshold deposits + consolidated outflow), which is a different mechanism (threshold evasion vs. hub redistribution) even though it shares a \"layering-like\" flavor and both ended up as needs_review/escalation recommendations.\n\nGiven the absence of true mule_hub precedents in what was retrieved, I can't state a reliable \"typical outcome\" for this specific typology from precedent alone. What I can say, drawing loosely on case_001 as the closest analog in spirit (multiple counterparties, rapid clustering, incomplete innocent explanation), is that cases with this degree of structural clarity and full playbook criteria matches (all 3 of 3) have tended toward escalation for full investigation rather than closure \u2014 but this is an inference from a differently-typed case, not a direct precedent match, so treat it cautiously.\n\nRecommendation: escalate case_005 for full investigation given the 3/3 MH criteria match and lack of any innocent-explanation KYC notes (most accounts have \"none on file\"), and separately flag the retrieval gap \u2014 request/seek precedents specifically tagged mule_hub to properly calibrate expected outcome and disposition.",
+    "citations": [
+      {
+        "case_id": "case_001",
+        "note": "Closest analog available: multi-counterparty rapid clustering pattern with no full innocent explanation led to escalation recommendation, though it is a structuring case, not mule_hub."
+      },
+      {
+        "case_id": "case_013",
+        "note": "Illustrates the opposite end of the spectrum (single transaction, established tenure, income-consistent) that was approved with no action \u2014 included only to show why it does not apply here, given case_005's short tenure and high counterparty count."
+      }
+    ],
+    "confidence": 0.35
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

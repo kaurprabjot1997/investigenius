@@ -4,7 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>case_005 — InvestiGenius</title>
-<link rel="stylesheet" href="styles.css">
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+header {
+  border-bottom: 4px solid #FFC72C;
+  background: #0033A0;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .brand { font-weight: 600; color: #fff; }
+header .snapshot-tag {
+  font-size: 12px;
+  color: #e2e8f0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+.back-link { font-size: 14px; color: #64748b; text-decoration: none; }
+.back-link:hover { color: #1e293b; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-tile { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+.stat-value { font-size: 28px; font-weight: 600; margin-top: 4px; }
+.stat-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.stat-value.accent-red { color: #b91c1c; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.card-table { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+.card-table thead { background: #f8fafc; color: #64748b; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; }
+.card-table th, .card-table td { text-align: left; padding: 10px 14px; }
+.card-table tbody tr { border-top: 1px solid #f1f5f9; }
+.card-table tbody tr.linked:hover { background: #f8fafc; }
+.card-table td a { color: #1e40af; text-decoration: none; font-weight: 500; }
+.card-table td a:hover { text-decoration: underline; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 999px; border: 1px solid; }
+.badge-red { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.badge-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.badge-emerald { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.badge-slate { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-title { font-size: 18px; font-weight: 600; margin: 0; }
+.page-sub { font-size: 13px; color: #64748b; margin: 4px 0 0; text-transform: capitalize; }
+
+.graph-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+.graph-card svg { display: block; width: 100%; height: auto; background: #fff; }
+.legend { display: flex; gap: 16px; padding: 8px 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.note-banner { border: 1px solid #fde68a; background: #fffbeb; color: #78350f; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+.info-banner { border: 1px solid #bae6fd; background: #f0f9ff; color: #0c4a6e; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+
+.section-label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; font-weight: 600; margin: 24px 0 10px; }
+
+.arg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.arg-card { background: #fff; border-radius: 8px; padding: 16px; border: 1px solid #e2e8f0; }
+.arg-card.prosecutor { border-color: #fecaca; }
+.arg-card.defense { border-color: #bfdbfe; }
+.arg-card h3 { margin: 0 0 8px; font-size: 13px; }
+.arg-card p { font-size: 13px; color: #334155; margin: 0 0 10px; }
+.claim { font-size: 12px; color: #475569; border-top: 1px solid #f1f5f9; padding-top: 8px; margin-top: 8px; }
+.cite { margin-left: 6px; font-family: ui-monospace, monospace; background: #f1f5f9; color: #64748b; border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+
+.narrative-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.6; color: #1e293b; margin-bottom: 24px; }
+.verdict-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+.audit-entry { background: #fff; border-bottom: 1px solid #f1f5f9; padding: 14px; font-size: 13px; }
+.audit-entry:last-child { border-bottom: none; }
+.audit-entry .top { display: flex; justify-content: space-between; }
+.audit-entry .actor { color: #64748b; font-size: 12px; margin-top: 2px; }
+.audit-entry pre { background: #f8fafc; border-radius: 6px; padding: 8px; font-size: 11px; margin: 8px 0 0; overflow-x: auto; }
+.audit-entry .hash { font-size: 10px; color: #94a3b8; margin-top: 6px; font-family: ui-monospace, monospace; word-break: break-all; }
+
+.hero { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+.hero h1 { margin: 0 0 8px; font-size: 22px; }
+.hero p { color: #475569; font-size: 14px; line-height: 1.6; margin: 0; }
+.link-list { list-style: none; padding: 0; margin: 0; }
+.link-list li { margin-bottom: 8px; }
+.link-list a { color: #1e40af; text-decoration: none; font-size: 14px; }
+.link-list a:hover { text-decoration: underline; }
+footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 24px; }
+
+</style>
 </head>
 <body>
 <header>
@@ -49,7 +144,34 @@
 </div><div class="actor">Inbound/outbound transaction counts are roughly balanced.</div></div><div class="audit-entry"><div class="top">
 <strong>&#10003; [MH-3] The hub account's tenure with the bank is short relative to the transaction volume passing through it</strong>
 </div><div class="actor">Hub tenure 0.9y against $28,647 in case volume.</div></div></div>
-<div class="note-banner">No recorded AI investigation for this case in this snapshot — only case_001 has a pre-recorded fixture.</div>
+<div class="section-label">AI Investigation (cached fixture — recorded during development)</div>
+<div class="verdict-row">
+  <span class="badge badge-red">ESCALATE</span>
+  <span>Confidence: 62%</span>
+  <span class="badge badge-slate">Source: replayed (cached) response</span>
+</div>
+<div class="arg-grid">
+<div class="arg-card prosecutor">
+<h3>Prosecutor</h3>
+<p>ACCT-2072 exhibits a classic mule_hub pattern: it functions as a central pass-through node cycling funds between 16 distinct counterparties in rapid, evenly-spaced alternating inbound/outbound transfers over a ~2.5 day window, with total volume ($28,647) grossly disproportionate to its short account tenure (0.9 years) and low expected activity per KYC. This structure is consistent with layering/mule activity designed to obscure the origin and destination of funds by rapidly rotating money through a hub account.</p>
+<div class="claim">ACCT-2072 transacts with 16 distinct counterparties within a ~2.5-day window (ACCT-2073 through ACCT-2088), far exceeding the 8+ threshold indicative of a mule hub.<span class="cite">TXN-0080</span></div><div class="claim">ACCT-2072's transaction pattern strictly alternates between inbound and outbound transfers every 4 hours (e.g., inbound TXN-0080 followed by outbound TXN-0081, inbound TXN-0082 followed by outbound TXN-0083), producing a near-even balance of 8 inbound and 8 outbound transactions rather than a typical income/expense pattern.<span class="cite">TXN-0081</span></div><div class="claim">The hub account received funds from ACCT-2075, ACCT-2077, ACCT-2079, ACCT-2081, ACCT-2083, ACCT-2085, and ACCT-2087 and immediately forwarded comparable amounts to a separate set of counterparties (ACCT-2074, ACCT-2076, ACCT-2078, ACCT-2080, ACCT-2082, ACCT-2084, ACCT-2086, ACCT-2088), consistent with layering funds through a pass-through account.<span class="cite">TXN-0084</span></div><div class="claim">ACCT-2072 was newly opened (0.9 years tenure) and flagged in KYC notes for 'low expected activity,' yet processed $28,647 in total transaction volume across this case window — a disproportionate volume relative to its stated profile and tenure.<span class="cite">ACCT-2072</span></div><div class="claim">All 16 transactions triggered individual high-frequency third-party transfer alerts on ACCT-2072, indicating automated detection systems flagged the account's transactional behavior as anomalous in real time.<span class="cite">ALERT-0080</span></div><div class="claim">The transactions occur at suspiciously regular 4-hour intervals around the clock (e.g., 01:00, 05:00, 09:00, 13:00, 17:00, 21:00) over three consecutive days, a cadence more consistent with automated/scripted mule activity than organic personal banking behavior.<span class="cite">TXN-0086</span></div><div class="claim">The counterparties transacting with ACCT-2072 span a wide range of unrelated occupations and income brackets (e.g., Student, Homemaker, Retired, Contract worker, Salaried employee) with several having very short account tenures (as low as 0.1 years), suggesting a network of recently onboarded or disparate accounts being used to move funds through the hub.<span class="cite">ACCT-2079</span></div><div class="claim">Individual transaction amounts cluster in the $690-$2,880 range, just below typical reporting thresholds, and are structured as one-to-one transfers rather than bulk transactions, consistent with deliberate structuring to avoid detection while funneling funds through the hub.<span class="cite">TXN-0083</span></div>
+</div>
+<div class="arg-card defense">
+<h3>Defense</h3>
+<p>While the automated mule_hub playbook flags ACCT-2072 for high-frequency, evenly-balanced, third-party transfers on a short-tenure account, the underlying transaction pattern is also fully consistent with several innocent explanations: a peer-to-peer collection/disbursement role (e.g., group payment organizer, informal savings circle/ROSCA, roommate or family bill-splitting hub, or small event/trip fund collector). The alternating inbound-then-outbound structure, the round-the-clock but evenly spaced 4-hour cadence, the modest transaction sizes (all under $3,000), and the fact that every counterparty is a CA-resident individual (not shell entities or foreign accounts) all support a benign explanation over deliberate layering.</p>
+<div class="claim">ACCT-2072's KYC notes explicitly describe it as a 'Newly opened account, low expected activity per KYC' — the short tenure flagged by MH-3 is a known, disclosed account attribute, not a concealment indicator, and the account owner is a salaried employee with digital banking enrolled, suggesting legitimate day-to-day account management rather than a purpose-built mule shell.<span class="cite">ACCT-2072</span></div><div class="claim">The transaction sequence follows a strict, evenly-spaced alternating pattern (inbound from one party, then outbound to another, every 4 hours: TXN-0080 in, TXN-0081 out, TXN-0082 in, TXN-0083 out, etc.), consistent with a person acting as a collection-and-payout organizer (e.g., splitting a group purchase, collecting rent/utilities from roommates, or distributing a group trip/event fund) rather than rapid layering to obscure origin of funds.<span class="cite">TXN-0080</span></div><div class="claim">Transaction amounts are modest and vary organically ($690–$2,880), in line with typical shared-expense or informal lending-circle contributions among a friend/family network rather than structured amounts designed to evade reporting thresholds.<span class="cite">TXN-0083</span></div><div class="claim">All 16 counterparty accounts (ACCT-2073 through ACCT-2088) are individual personal accounts based in the same state (CA), consistent with a localized social or family network (e.g., a rotating savings group or shared-household expense circle) rather than a geographically dispersed money-mule collection network.<span class="cite">ACCT-2073</span></div><div class="claim">The counterparties span a wide range of occupations and income levels (students, homemakers, retirees, contract workers, salaried employees), which is typical of an informal community fund or ROSCA (rotating savings and credit association) that draws from diverse acquaintances, rather than a professional criminal money-mule network which would more typically use accounts with uniform or synthetic profiles.<span class="cite">ACCT-2079</span></div><div class="claim">The roughly even inbound/outbound balance noted in MH-2 is exactly what would be expected of a pass-through collector who receives contributions and immediately redistributes them (e.g., paying a landlord, vendor, or event organizer on behalf of the group), rather than an account accumulating illicit proceeds.<span class="cite">TXN-0084</span></div><div class="claim">The full transaction set occurs within a compact 3-day window (2026-07-15 to 2026-07-17) with one inbound/outbound pair every 4 hours, a cadence consistent with a single organizer working through a pre-arranged list of participants (e.g., closing out a group bill or fundraiser) rather than an automated or evasive laundering script.<span class="cite">TXN-0095</span></div>
+</div>
+</div>
+<div class="section-label">Draft narrative (for investigator review, not a final determination)</div>
+<div class="narrative-box">SUMMARY: ACCT-2072 meets all three standardized mule_hub playbook criteria: (MH-1) 16 distinct counterparties (ACCT-2073 through ACCT-2088) within a ~2.5-day window, well above the 8+ threshold; (MH-2) near-even inbound/outbound balance (8 in / 8 out, alternating every 4 hours per TXN-0080 through TXN-0095); and (MH-3) short 0.9-year tenure against disproportionate volume ($28,647), which is explicitly flagged against KYC notes stating "low expected activity" for ACCT-2072.
+
+PROSECUTION CASE: The prosecutor's strongest points are structural — the strict alternating inbound/outbound cadence at regular 4-hour intervals around the clock (TXN-0080–0095), the sheer counterparty count (16, per ALERT-0080 through ALERT-0095, each independently triggering high-frequency alerts), and the mismatch between account tenure/KYC expectations and actual volume (ACCT-2072). This is a facially strong match to the mule_hub typology definition and the automated behavioral signal corroborates it.
+
+DEFENSE CASE: The defense offers a plausible alternative narrative — a peer-to-peer collection/disbursement role (ROSCA, bill-splitting, event fund) — supported by: all counterparties being CA-resident individuals rather than shell/foreign entities (ACCT-2073 through ACCT-2088), modest and organically varying transaction amounts ($690–$2,880, per TXN-0083), and diverse but plausible personal-account profiles (students, homemakers, retirees, salaried employees per ACCT-2079). However, this defense is largely speculative — there is no direct evidence (e.g., memo lines, external corroboration, prior account history) supporting a ROSCA, bill-split, or event-fund explanation. It is a plausible innocent story, not a proven one.
+
+WEIGHING: The mechanical/automated cadence (exactly 4-hour intervals, strictly alternating in/out, round-the-clock including odd hours like 01:00, 05:00, 09:00) is unusual even for an organized informal collector — real-world social/organizer behavior is rarely this metronomic, which cuts against the benign explanation and somewhat supports the prosecution's "scripted" characterization. Conversely, the defense's point about localized, non-shell CA individual counterparties with diverse legitimate profiles is a meaningful mitigant against a classic professional mule network (which usually uses synthetic or geographically dispersed accounts). Neither side has hard evidence (e.g., beneficial ownership links, device/IP overlap, external SAR filings on counterparties) to conclusively settle intent. The KYC mismatch (low expected activity vs. actual disproportionate volume) is a genuine red flag that KYC/EDD review should resolve, and this is exactly the kind of case where playbook-driven automated detection should trigger human follow-up rather than autonomous closure.
+
+VERDICT RATIONALE: Given the account satisfies all three standardized mule_hub criteria, exhibits an unusually rigid/mechanical transaction cadence, and shows a clear KYC-versus-volume mismatch, this warrants escalation for further investigation (e.g., KYC refresh, counterparty relationship confirmation, source-of-funds inquiry) rather than closure. However, the defense's alternative explanation is credible enough, and the network is entirely local/individual (not shell/synthetic), that confidence in outright criminal mule activity is moderate, not high.</div>
 </div>
 <footer>Static snapshot generated from live dataset — not connected to a running backend. See TEAM_BRIEFING.md for the full write-up.</footer>
 </body>

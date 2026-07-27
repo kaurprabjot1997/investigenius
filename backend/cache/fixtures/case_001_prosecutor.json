@@ -1,21 +1,51 @@
 {
   "content": {
-    "summary": "Twelve separate accounts each transferred amounts just under the $10,000 reporting threshold into ACCT-9000 within a 48-hour window, then the consolidated balance was moved out to an external account the same day. This pattern is consistent with structuring/smurfing followed by rapid layering.",
+    "summary": "The evidence supports a classic structuring / smurfing typology centered on ACCT-9000 (Coastline Catering Co.). Twelve unrelated individual accounts (ACCT-1001 through ACCT-1012), spanning a wide range of ages, occupations, and income levels, each sent a single inbound transfer to ACCT-9000 within a tight 33-hour window. Every transfer was individually sized between $9,200 and $9,750 \u2014 consistently 92-97.5% of the $10,000 CTR reporting threshold \u2014 a pattern strongly indicative of deliberate structuring to evade currency transaction reporting requirements. None of the feeder accounts had any prior relationship with ACCT-9000 (single-use appearance each), suggesting they were recruited or coordinated specifically for this scheme rather than acting as genuine catering customers. Within just 7 hours of the last near-threshold inbound transfer, ACCT-9000 consolidated the full $113,700 and pushed it out in one lump sum to EXT-5000, an external account at an unknown bank with no KYC history \u2014 a rapid layering move that removed the funds from the monitored institution almost immediately after consolidation. This \"collect small amounts, then rapidly sweep out\" pattern matches all four criteria of the standardized structuring playbook and is further corroborated by 13 separate system-generated alerts (one per near-threshold inbound transaction plus one for the large consolidated outflow), each independently flagging the same threshold-avoidance and rapid-outflow behavior. The business account's KYC file describes it as a small registered caterer, yet it is receiving twelve coordinated near-threshold payments from twelve different individuals in a day and a half \u2014 a volume and pattern inconsistent with typical catering business receipts, and immediately followed by full evacuation of the funds to an external, unvetted account.",
     "claims": [
       {
-        "statement": "ACCT-1001 through ACCT-1012 each sent between $9,200 and $9,800 to ACCT-9000, all just under the $10,000 CTR threshold.",
-        "citation_id": "TXN-0001",
+        "statement": "ACCT-9000 received 12 separate inbound transfers, each individually priced between $9,200 and $9,750 \u2014 all in the 92-97.5% range of the $10,000 CTR threshold \u2014 consistent with deliberate structuring to avoid reporting requirements.",
+        "citation_id": "STR-1",
         "typology": "structuring"
       },
       {
-        "statement": "All twelve inbound transfers occurred within a 48-hour window on 2026-07-10 and 2026-07-11.",
-        "citation_id": "TXN-0006",
+        "statement": "All 12 near-threshold transfers occurred within a 33-hour window (well under the 72-hour clustering threshold), indicating coordinated timing across unrelated feeder accounts.",
+        "citation_id": "STR-2",
         "typology": "structuring"
       },
       {
-        "statement": "ACCT-9000 had no prior transaction history before this cluster, then moved the full consolidated balance ($112,400) to an external account within hours of the last inbound transfer.",
+        "statement": "TXN-0013 consolidated the entire $113,700 balance out of ACCT-9000 to external account EXT-5000 only 7 hours after the final structured inbound transfer, indicating rapid layering to move funds out of reach before scrutiny.",
         "citation_id": "TXN-0013",
         "typology": "layering"
+      },
+      {
+        "statement": "Each of the 12 feeder accounts (ACCT-1001 through ACCT-1012) transacted with ACCT-9000 exactly once, showing no established business relationship consistent with legitimate recurring catering customers.",
+        "citation_id": "STR-4",
+        "typology": "structuring"
+      },
+      {
+        "statement": "The feeder accounts belong to individuals with highly varied profiles (retirees, a student in the Philippines, homemakers, a contract worker, self-employed) with no apparent common business reason to simultaneously pay the same caterer near-identical, near-threshold amounts within a day and a half.",
+        "citation_id": "ACCT-1008",
+        "typology": "structuring"
+      },
+      {
+        "statement": "TXN-0001 ($9,200 from ACCT-1001) was flagged as a sub-$10,000 transfer near the CTR threshold, one of twelve identical alerts raised across all feeder transactions.",
+        "citation_id": "ALERT-0001",
+        "typology": "structuring"
+      },
+      {
+        "statement": "TXN-0013's large same-day consolidated outflow from ACCT-9000 was independently flagged by automated monitoring as suspicious, corroborating the rapid layering concern.",
+        "citation_id": "ALERT-0013",
+        "typology": "layering"
+      },
+      {
+        "statement": "The destination of the consolidated outflow, EXT-5000, is an external account at an unknown bank with no KYC information on file, increasing the risk that funds are being moved beyond the reach of the originating institution's controls.",
+        "citation_id": "EXT-5000",
+        "typology": "layering"
+      },
+      {
+        "statement": "ACCT-9000, a small registered catering business, received twelve coordinated near-threshold payments from twelve unrelated individuals within 33 hours \u2014 a transaction volume and structuring pattern inconsistent with its stated business profile.",
+        "citation_id": "ACCT-9000",
+        "typology": "structuring"
       }
     ]
   },

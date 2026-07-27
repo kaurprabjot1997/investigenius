@@ -1,0 +1,59 @@
+{
+  "content": {
+    "claims": [
+      {
+        "statement": "A closed five-hop transaction cycle exists returning funds to the originating account: ACCT-2054 -> ACCT-2055 -> ACCT-2056 -> ACCT-2057 -> ACCT-2058 -> ACCT-2054, indicating round-tripping rather than legitimate commerce.",
+        "citation_id": "TXN-0063",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "The cycle closes back to ACCT-2054 via TXN-0067, confirming funds returned to point of origin.",
+        "citation_id": "TXN-0067",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "All five hops occur within a 24-hour window (2026-07-12T09:00 to 2026-07-13T09:00), satisfying the short time-window criterion for coordinated circular movement (RT-2).",
+        "citation_id": "TXN-0063",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "Hop amounts range from $25,068.90 to $26,722.01, varying by less than 25% across all five transactions, consistent with layering designed to preserve value while obscuring origin (RT-3).",
+        "citation_id": "TXN-0064",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "Each account in the cycle triggered an individual circular fund flow alert, corroborating system-level detection of the round-tripping pattern across all five participants.",
+        "citation_id": "ALERT-0063",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "ACCT-2056 alert independently flags the same cyclical structure at the midpoint of the chain.",
+        "citation_id": "ALERT-0065",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "ACCT-2057 alert confirms circular flow involvement at the second-to-last hop.",
+        "citation_id": "ALERT-0066",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "ACCT-2055 alert confirms circular flow involvement at the first receiving hop.",
+        "citation_id": "ALERT-0064",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "ACCT-2058 alert confirms circular flow involvement at the final hop before funds return to origin.",
+        "citation_id": "ALERT-0067",
+        "typology": "round_tripping"
+      },
+      {
+        "statement": "None of the five personal accounts have any KYC notes on file, and none display an occupation or income profile (Homemaker, Retired, Student) that would economically justify sequential transfers of ~$25,000-$26,700 each within hours, undermining any legitimate business rationale for the fund movement.",
+        "citation_id": "ACCT-2057",
+        "typology": "round_tripping"
+      }
+    ],
+    "summary": "The five accounts (ACCT-2054 through ACCT-2058) form a closed, rapid, same-magnitude transaction loop that returns funds to the originating account within 24 hours, meeting all three standardized round-tripping criteria (cyclical flow, short time window, similar hop amounts). Each account independently triggered a circular fund flow alert, and none of the account holders' profiles (homemakers, a retiree, and students with modest declared incomes) provide plausible economic justification for sequential transfers of $25K-$27K each. The absence of any KYC documentation across all five accounts further compounds the risk, strongly supporting a determination of suspicious round-tripping activity consistent with layering to obscure fund origin or manufacture transaction history."
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

@@ -1,0 +1,29 @@
+{
+  "content": {
+    "summary": "The evidence available for case_013 is minimal and does not support a strong suspicious activity case. A single transfer of $5,049.45 (TXN-0116) between two personal accounts (ACCT-2110 and ACCT-2111) triggered a routine monitoring alert (ALERT-0116) for an \"elevated\" amount, but there is no corroborating evidence of structuring, layering, rapid movement of funds, use of shell entities, or other network-level red flags. The graph risk score is low (10.0/100), and no typology was flagged by the system. Both accounts have digital banking enrollment and plausible KYC profiles (long tenure for ACCT-2110, moderate tenure for ACCT-2111), with no adverse KYC notes on file. Absent additional transactions, velocity, or counterparty risk indicators, this case presents only weak, circumstantial grounds for suspicion.",
+    "claims": [
+      {
+        "statement": "A single transfer of $5,049.45 from ACCT-2110 to ACCT-2111 was flagged by routine monitoring as an elevated single transfer amount, which is the sole basis for the alert.",
+        "citation_id": "TXN-0116",
+        "typology": "Elevated single transaction"
+      },
+      {
+        "statement": "The alert on ACCT-2110 was generated purely from routine monitoring thresholds rather than any pattern of repeated or structured transfers, limiting the strength of the suspicion case.",
+        "citation_id": "ALERT-0116",
+        "typology": "Routine monitoring alert - low corroboration"
+      },
+      {
+        "statement": "ACCT-2110 has a long client tenure (23.7 years) and no adverse KYC notes, which reduces (but does not eliminate) the likelihood that this single transfer represents illicit activity.",
+        "citation_id": "ACCT-2110",
+        "typology": "Mitigating KYC context"
+      },
+      {
+        "statement": "ACCT-2111, the receiving account, is a personal account with a shorter tenure (7.0 years) and no adverse KYC notes, providing no independent corroboration of suspicious receipt of funds.",
+        "citation_id": "ACCT-2111",
+        "typology": "Mitigating KYC context"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

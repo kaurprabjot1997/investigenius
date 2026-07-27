@@ -1,0 +1,49 @@
+{
+  "content": {
+    "summary": "ACCT-2072 exhibits a classic mule_hub pattern: it functions as a central pass-through node cycling funds between 16 distinct counterparties in rapid, evenly-spaced alternating inbound/outbound transfers over a ~2.5 day window, with total volume ($28,647) grossly disproportionate to its short account tenure (0.9 years) and low expected activity per KYC. This structure is consistent with layering/mule activity designed to obscure the origin and destination of funds by rapidly rotating money through a hub account.",
+    "claims": [
+      {
+        "statement": "ACCT-2072 transacts with 16 distinct counterparties within a ~2.5-day window (ACCT-2073 through ACCT-2088), far exceeding the 8+ threshold indicative of a mule hub.",
+        "citation_id": "TXN-0080",
+        "typology": "mule_hub"
+      },
+      {
+        "statement": "ACCT-2072's transaction pattern strictly alternates between inbound and outbound transfers every 4 hours (e.g., inbound TXN-0080 followed by outbound TXN-0081, inbound TXN-0082 followed by outbound TXN-0083), producing a near-even balance of 8 inbound and 8 outbound transactions rather than a typical income/expense pattern.",
+        "citation_id": "TXN-0081",
+        "typology": "mule_hub"
+      },
+      {
+        "statement": "The hub account received funds from ACCT-2075, ACCT-2077, ACCT-2079, ACCT-2081, ACCT-2083, ACCT-2085, and ACCT-2087 and immediately forwarded comparable amounts to a separate set of counterparties (ACCT-2074, ACCT-2076, ACCT-2078, ACCT-2080, ACCT-2082, ACCT-2084, ACCT-2086, ACCT-2088), consistent with layering funds through a pass-through account.",
+        "citation_id": "TXN-0084",
+        "typology": "mule_hub"
+      },
+      {
+        "statement": "ACCT-2072 was newly opened (0.9 years tenure) and flagged in KYC notes for 'low expected activity,' yet processed $28,647 in total transaction volume across this case window \u2014 a disproportionate volume relative to its stated profile and tenure.",
+        "citation_id": "ACCT-2072",
+        "typology": "mule_hub"
+      },
+      {
+        "statement": "All 16 transactions triggered individual high-frequency third-party transfer alerts on ACCT-2072, indicating automated detection systems flagged the account's transactional behavior as anomalous in real time.",
+        "citation_id": "ALERT-0080",
+        "typology": "mule_hub"
+      },
+      {
+        "statement": "The transactions occur at suspiciously regular 4-hour intervals around the clock (e.g., 01:00, 05:00, 09:00, 13:00, 17:00, 21:00) over three consecutive days, a cadence more consistent with automated/scripted mule activity than organic personal banking behavior.",
+        "citation_id": "TXN-0086",
+        "typology": "mule_hub"
+      },
+      {
+        "statement": "The counterparties transacting with ACCT-2072 span a wide range of unrelated occupations and income brackets (e.g., Student, Homemaker, Retired, Contract worker, Salaried employee) with several having very short account tenures (as low as 0.1 years), suggesting a network of recently onboarded or disparate accounts being used to move funds through the hub.",
+        "citation_id": "ACCT-2079",
+        "typology": "mule_hub"
+      },
+      {
+        "statement": "Individual transaction amounts cluster in the $690-$2,880 range, just below typical reporting thresholds, and are structured as one-to-one transfers rather than bulk transactions, consistent with deliberate structuring to avoid detection while funneling funds through the hub.",
+        "citation_id": "TXN-0083",
+        "typology": "mule_hub"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

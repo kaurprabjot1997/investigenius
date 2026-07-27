@@ -2,8 +2,11 @@ import type {
   AuditEntry,
   CaseDetail,
   CaseSummary,
+  ChatAnswer,
   DemoRole,
   InvestigationResult,
+  QueuedAlert,
+  SuggestedQuestion,
 } from "../types/investigation";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000/api";
@@ -33,6 +36,12 @@ export function getCase(caseId: string, role: DemoRole): Promise<CaseDetail> {
   return authedFetch(`/cases/${caseId}`, role).then((res) => unwrap(res));
 }
 
+export function listAlerts(role: DemoRole): Promise<QueuedAlert[]> {
+  return authedFetch("/alerts", role)
+    .then((res) => unwrap<{ alerts: QueuedAlert[] }>(res))
+    .then((body) => body.alerts);
+}
+
 export function investigateCase(caseId: string, role: DemoRole): Promise<InvestigationResult> {
   return authedFetch(`/cases/${caseId}/investigate`, role, {
     method: "POST",
@@ -58,4 +67,22 @@ export function getAuditTrail(caseId: string, role: DemoRole): Promise<AuditEntr
   return authedFetch(`/cases/${caseId}/audit`, role)
     .then((res) => unwrap<{ case_id: string; trail: AuditEntry[] }>(res))
     .then((body) => body.trail);
+}
+
+export function getSuggestedQuestions(caseId: string, role: DemoRole): Promise<SuggestedQuestion[]> {
+  return authedFetch(`/cases/${caseId}/chat/suggested-questions`, role)
+    .then((res) => unwrap<{ questions: SuggestedQuestion[] }>(res))
+    .then((body) => body.questions);
+}
+
+export function askPrecedentChat(
+  caseId: string,
+  role: DemoRole,
+  params: { question?: string; questionId?: string },
+): Promise<ChatAnswer> {
+  return authedFetch(`/cases/${caseId}/chat`, role, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: params.question ?? "", question_id: params.questionId ?? null }),
+  }).then((res) => unwrap(res));
 }

@@ -1,0 +1,22 @@
+{
+  "content": {
+    "answer": "Not directly. None of the three retrieved precedents involve a structuring/smurfing pattern like this one (many feeder accounts each sending a single near-CTR-threshold transfer into a hub account, followed by rapid consolidated outflow).\n\n- case_005 is a mule_hub fan-out case (one account paying many counterparties), which is structurally the reverse of this fan-in pattern, and it was ultimately closed after manual review found a legitimate business explanation (P2P marketplace seller). That precedent is only marginally relevant \u2014 it's a cautionary example that even suspicious-looking hub activity can have a benign explanation, but the fact pattern (fan-out vs. fan-in, no near-threshold structuring, corroborated legitimate business) doesn't match this case.\n- case_007 is round-tripping (circular flows among 5 accounts), a different typology entirely, though it does show that when all playbook criteria for a typology are matched and no legitimate purpose is found, escalation was approved by the human reviewer \u2014 a useful process analogy but not a factual match.\n- case_013 is a single low-risk transaction between long-tenured accounts, essentially the opposite risk profile of this case (12 accounts, near-threshold amounts, rapid consolidation, single-use feeder accounts).\n\nThis case's own evidence is unusually clean for a textbook structuring typology: all four STR criteria (STR-1 through STR-4) are matched \u2014 12 near-threshold inbound transfers within a 33-hour window, followed by a consolidated outbound transfer 7 hours later, with each feeder account used only once. That is a strong, complete match to the structuring playbook itself, but I don't have a prior *case* in the retrieved set with this same fan-in structuring signature to cite as a direct precedent. I'd recommend treating this as a novel/first instance of a fully-matched structuring pattern in the retrieved history, escalating on the strength of the playbook match alone, and not relying on the above precedents as factual analogues \u2014 only case_007 offers a loose procedural analogy (full playbook match + no legitimate purpose \u2192 escalate/approve).",
+    "citations": [
+      {
+        "case_id": "case_005",
+        "note": "Superficially similar 'many transactions into/out of a hub account' shape, but it's a fan-out mule_hub case that was closed after legitimate business use was confirmed \u2014 illustrates a hub pattern can be benign, but does not match this fan-in structuring fact pattern."
+      },
+      {
+        "case_id": "case_007",
+        "note": "Different typology (round-tripping), but shows precedent for escalating when all playbook criteria for a typology are matched and no legitimate purpose is found."
+      },
+      {
+        "case_id": "case_013",
+        "note": "Low-risk single-transaction case with opposite profile (established accounts, income-consistent amount) \u2014 confirms this case's profile (many new/short relationships, near-threshold amounts) is not comparable."
+      }
+    ],
+    "confidence": 0.55
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

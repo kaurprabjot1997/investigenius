@@ -4,7 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>case_001 — InvestiGenius</title>
-<link rel="stylesheet" href="styles.css">
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+header {
+  border-bottom: 4px solid #FFC72C;
+  background: #0033A0;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .brand { font-weight: 600; color: #fff; }
+header .snapshot-tag {
+  font-size: 12px;
+  color: #e2e8f0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+.back-link { font-size: 14px; color: #64748b; text-decoration: none; }
+.back-link:hover { color: #1e293b; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-tile { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+.stat-value { font-size: 28px; font-weight: 600; margin-top: 4px; }
+.stat-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.stat-value.accent-red { color: #b91c1c; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.card-table { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+.card-table thead { background: #f8fafc; color: #64748b; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; }
+.card-table th, .card-table td { text-align: left; padding: 10px 14px; }
+.card-table tbody tr { border-top: 1px solid #f1f5f9; }
+.card-table tbody tr.linked:hover { background: #f8fafc; }
+.card-table td a { color: #1e40af; text-decoration: none; font-weight: 500; }
+.card-table td a:hover { text-decoration: underline; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 999px; border: 1px solid; }
+.badge-red { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.badge-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.badge-emerald { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.badge-slate { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-title { font-size: 18px; font-weight: 600; margin: 0; }
+.page-sub { font-size: 13px; color: #64748b; margin: 4px 0 0; text-transform: capitalize; }
+
+.graph-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+.graph-card svg { display: block; width: 100%; height: auto; background: #fff; }
+.legend { display: flex; gap: 16px; padding: 8px 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.note-banner { border: 1px solid #fde68a; background: #fffbeb; color: #78350f; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+.info-banner { border: 1px solid #bae6fd; background: #f0f9ff; color: #0c4a6e; font-size: 13px; border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; }
+
+.section-label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; font-weight: 600; margin: 24px 0 10px; }
+
+.arg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.arg-card { background: #fff; border-radius: 8px; padding: 16px; border: 1px solid #e2e8f0; }
+.arg-card.prosecutor { border-color: #fecaca; }
+.arg-card.defense { border-color: #bfdbfe; }
+.arg-card h3 { margin: 0 0 8px; font-size: 13px; }
+.arg-card p { font-size: 13px; color: #334155; margin: 0 0 10px; }
+.claim { font-size: 12px; color: #475569; border-top: 1px solid #f1f5f9; padding-top: 8px; margin-top: 8px; }
+.cite { margin-left: 6px; font-family: ui-monospace, monospace; background: #f1f5f9; color: #64748b; border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+
+.narrative-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.6; color: #1e293b; margin-bottom: 24px; }
+.verdict-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+.audit-entry { background: #fff; border-bottom: 1px solid #f1f5f9; padding: 14px; font-size: 13px; }
+.audit-entry:last-child { border-bottom: none; }
+.audit-entry .top { display: flex; justify-content: space-between; }
+.audit-entry .actor { color: #64748b; font-size: 12px; margin-top: 2px; }
+.audit-entry pre { background: #f8fafc; border-radius: 6px; padding: 8px; font-size: 11px; margin: 8px 0 0; overflow-x: auto; }
+.audit-entry .hash { font-size: 10px; color: #94a3b8; margin-top: 6px; font-family: ui-monospace, monospace; word-break: break-all; }
+
+.hero { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+.hero h1 { margin: 0 0 8px; font-size: 22px; }
+.hero p { color: #475569; font-size: 14px; line-height: 1.6; margin: 0; }
+.link-list { list-style: none; padding: 0; margin: 0; }
+.link-list li { margin-bottom: 8px; }
+.link-list a { color: #1e40af; text-decoration: none; font-size: 14px; }
+.link-list a:hover { text-decoration: underline; }
+footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 24px; }
+
+</style>
 </head>
 <body>
 <header>
@@ -53,23 +148,36 @@
 <div class="section-label">AI Investigation (cached fixture — recorded during development)</div>
 <div class="verdict-row">
   <span class="badge badge-red">ESCALATE</span>
-  <span>Confidence: 82%</span>
+  <span>Confidence: 78%</span>
   <span class="badge badge-slate">Source: replayed (cached) response</span>
 </div>
 <div class="arg-grid">
 <div class="arg-card prosecutor">
 <h3>Prosecutor</h3>
-<p>Twelve separate accounts each transferred amounts just under the $10,000 reporting threshold into ACCT-9000 within a 48-hour window, then the consolidated balance was moved out to an external account the same day. This pattern is consistent with structuring/smurfing followed by rapid layering.</p>
-<div class="claim">ACCT-1001 through ACCT-1012 each sent between $9,200 and $9,800 to ACCT-9000, all just under the $10,000 CTR threshold.<span class="cite">TXN-0001</span></div><div class="claim">All twelve inbound transfers occurred within a 48-hour window on 2026-07-10 and 2026-07-11.<span class="cite">TXN-0006</span></div><div class="claim">ACCT-9000 had no prior transaction history before this cluster, then moved the full consolidated balance ($112,400) to an external account within hours of the last inbound transfer.<span class="cite">TXN-0013</span></div>
+<p>The evidence supports a classic structuring / smurfing typology centered on ACCT-9000 (Coastline Catering Co.). Twelve unrelated individual accounts (ACCT-1001 through ACCT-1012), spanning a wide range of ages, occupations, and income levels, each sent a single inbound transfer to ACCT-9000 within a tight 33-hour window. Every transfer was individually sized between $9,200 and $9,750 — consistently 92-97.5% of the $10,000 CTR reporting threshold — a pattern strongly indicative of deliberate structuring to evade currency transaction reporting requirements. None of the feeder accounts had any prior relationship with ACCT-9000 (single-use appearance each), suggesting they were recruited or coordinated specifically for this scheme rather than acting as genuine catering customers. Within just 7 hours of the last near-threshold inbound transfer, ACCT-9000 consolidated the full $113,700 and pushed it out in one lump sum to EXT-5000, an external account at an unknown bank with no KYC history — a rapid layering move that removed the funds from the monitored institution almost immediately after consolidation. This "collect small amounts, then rapidly sweep out" pattern matches all four criteria of the standardized structuring playbook and is further corroborated by 13 separate system-generated alerts (one per near-threshold inbound transaction plus one for the large consolidated outflow), each independently flagging the same threshold-avoidance and rapid-outflow behavior. The business account's KYC file describes it as a small registered caterer, yet it is receiving twelve coordinated near-threshold payments from twelve different individuals in a day and a half — a volume and pattern inconsistent with typical catering business receipts, and immediately followed by full evacuation of the funds to an external, unvetted account.</p>
+<div class="claim">ACCT-9000 received 12 separate inbound transfers, each individually priced between $9,200 and $9,750 — all in the 92-97.5% range of the $10,000 CTR threshold — consistent with deliberate structuring to avoid reporting requirements.<span class="cite">STR-1</span></div><div class="claim">All 12 near-threshold transfers occurred within a 33-hour window (well under the 72-hour clustering threshold), indicating coordinated timing across unrelated feeder accounts.<span class="cite">STR-2</span></div><div class="claim">TXN-0013 consolidated the entire $113,700 balance out of ACCT-9000 to external account EXT-5000 only 7 hours after the final structured inbound transfer, indicating rapid layering to move funds out of reach before scrutiny.<span class="cite">TXN-0013</span></div><div class="claim">Each of the 12 feeder accounts (ACCT-1001 through ACCT-1012) transacted with ACCT-9000 exactly once, showing no established business relationship consistent with legitimate recurring catering customers.<span class="cite">STR-4</span></div><div class="claim">The feeder accounts belong to individuals with highly varied profiles (retirees, a student in the Philippines, homemakers, a contract worker, self-employed) with no apparent common business reason to simultaneously pay the same caterer near-identical, near-threshold amounts within a day and a half.<span class="cite">ACCT-1008</span></div><div class="claim">TXN-0001 ($9,200 from ACCT-1001) was flagged as a sub-$10,000 transfer near the CTR threshold, one of twelve identical alerts raised across all feeder transactions.<span class="cite">ALERT-0001</span></div><div class="claim">TXN-0013's large same-day consolidated outflow from ACCT-9000 was independently flagged by automated monitoring as suspicious, corroborating the rapid layering concern.<span class="cite">ALERT-0013</span></div><div class="claim">The destination of the consolidated outflow, EXT-5000, is an external account at an unknown bank with no KYC information on file, increasing the risk that funds are being moved beyond the reach of the originating institution's controls.<span class="cite">EXT-5000</span></div><div class="claim">ACCT-9000, a small registered catering business, received twelve coordinated near-threshold payments from twelve unrelated individuals within 33 hours — a transaction volume and structuring pattern inconsistent with its stated business profile.<span class="cite">ACCT-9000</span></div>
 </div>
 <div class="arg-card defense">
 <h3>Defense</h3>
-<p>ACCT-9000 is registered to a small business (a catering company per KYC records) and the twelve inbound transfers are labeled with invoice references. Under-$10,000 amounts could plausibly reflect genuine invoice values rather than deliberate structuring, though the clustering in a 48-hour window is unusual for normal invoice payment timing.</p>
-<div class="claim">ACCT-9000's KYC profile lists the account holder as a catering business, and each inbound transfer carries a distinct invoice reference number.<span class="cite">TXN-0001</span></div><div class="claim">The account holder's stated average monthly revenue in KYC records is consistent with roughly this transaction volume on a monthly basis, not necessarily suspicious in isolation.<span class="cite">TXN-0013</span></div>
+<p>While the transaction pattern superficially matches the standardized structuring checklist (STR-1 through STR-4), the underlying account profiles and business context support a plausible legitimate explanation: this looks like a catering business collecting payments from a dozen individual customers — likely for a large shared event (e.g., a wedding, festival, or holiday catering contract) — followed by the caterer sweeping receipts to its own external operating/payroll account. Several case-specific facts support this innocent reading rather than deliberate structuring.</p>
+<div class="claim">The receiving account, ACCT-9000, is a registered catering business (Coastline Catering Co.) with KYC on file and 13.6 years of tenure, consistent with a long-standing legitimate merchant rather than a shell or mule account newly set up to receive structured funds.<span class="cite">ACCT-9000</span></div><div class="claim">The 12 inbound payments are plausibly customer payments for a single large catering job (e.g., a wedding or corporate event) split among many guests/family members rather than structured deposits, since each payer is a distinct individual account rather than the same person repeatedly depositing.<span class="cite">TXN-0001</span></div><div class="claim">Payment amounts increase steadily and organically from $9,200 to $9,750 across the 12 transactions, a pattern consistent with different customers independently paying slightly different invoice totals (e.g., varying guest counts or add-on services) rather than a coordinated attempt to stay just under the $10,000 CTR threshold.<span class="cite">TXN-0012</span></div><div class="claim">The inbound transfers span 33 hours (not a tight simultaneous burst), consistent with customers paying at their own convenience across a weekend/event period rather than a single actor rapidly structuring cash in a short window.<span class="cite">ALERT-0010</span></div><div class="claim">Many of the paying individuals are retirees, homemakers, and self-employed/contract workers based in CA with long account tenures (e.g., ACCT-1005 at 14.3 years, ACCT-1009 at 13.4 years, ACCT-1011 at 11.4 years), suggesting established local customers of the caterer rather than newly recruited straw depositors.<span class="cite">ACCT-1005</span></div><div class="claim">The outbound sweep (TXN-0013) to EXT-5000 for $113,700 is consistent with a normal business practice of consolidating daily/weekly receipts into an external primary operating or payroll account, a common cash-management routine for small businesses rather than covert layering.<span class="cite">TXN-0013</span></div><div class="claim">Each feeder account transacts with ACCT-9000 only once in the record, which is exactly what would be expected from one-time or infrequent catering customers paying a single invoice for a one-off event, rather than an ongoing structuring relationship.<span class="cite">TXN-0007</span></div>
 </div>
 </div>
 <div class="section-label">Draft narrative (for investigator review, not a final determination)</div>
-<div class="narrative-box">DRAFT — for investigator review, not a final determination. Twelve accounts (ACCT-1001 through ACCT-1012) each transferred amounts just under the $10,000 CTR threshold into ACCT-9000 within a 48-hour window (TXN-0001 through TXN-0012), which was then followed by a same-day consolidated outbound transfer of the full balance (TXN-0013). While ACCT-9000's KYC profile identifies a catering business with invoice-referenced transfers, which offers a plausible innocent explanation for individual transaction amounts, the tight 48-hour clustering of twelve near-threshold deposits followed immediately by full-balance outflow is not adequately explained by normal invoice payment timing. This combination is consistent with a structuring-into-layering pattern. Recommend escalation for full investigation, including verification of the underlying invoices against the counterparty accounts.</div>
+<div class="narrative-box">Summary of findings for human review:
+
+The transaction pattern meets all four criteria of the standardized structuring playbook: (1) 12 inbound transfers to ACCT-9000, each 92-97.5% of the $10,000 CTR threshold [STR-1]; (2) all clustered within a 33-hour window, well inside the 72-hour flag [STR-2]; (3) a rapid consolidated outbound sweep of $113,700 to an unvetted external account (EXT-5000) only 7 hours after the last inbound transfer [STR-3, TXN-0013]; and (4) each of the 12 feeder accounts (ACCT-1001 through ACCT-1012) transacted with ACCT-9000 exactly once, indicating no established recurring relationship [STR-4]. This is corroborated by 13 independent system alerts (ALERT-0001 through ALERT-0012 for the near-threshold inbounds, ALERT-0013 for the consolidated outflow).
+
+The defense's alternative explanation — that this represents legitimate catering payments for a shared large event (e.g., wedding/festival) followed by routine business fund consolidation — is plausible on its face and supported by ACCT-9000's long tenure (13.6 years) and on-file KYC as a registered caterer [ACCT-9000]. The "organically increasing" invoice amounts ($9,200 to $9,750) and one-time nature of each feeder payment [TXN-0001, TXN-0012, TXN-0007] are consistent with distinct customers paying varying invoice totals rather than obvious identical structuring amounts.
+
+However, several factors weigh against the innocent explanation and warrant escalation rather than closure:
+1. The near-uniform steady increment in transfer amounts ($9,200, $9,250, $9,300... in $50 increments) is unusual for organic, independent invoices from unrelated customers — this pattern looks more procedurally generated than naturally variable.
+2. All 12 amounts fall strictly within the 92-97.5% CTR-threshold band with none exceeding $10,000 or falling into a more "natural" wider distribution — a coincidence that is statistically improbable for genuine independent invoices.
+3. One feeder account (ACCT-1008) is a student based in the Philippines with under 3 years of tenure and income under $20K — an outlier profile inconsistent with a "long-standing local customer" narrative the defense offers for other accounts.
+4. The destination of the outbound sweep, EXT-5000, has no KYC information on file at all, which is a meaningful gap — legitimate business operating/payroll accounts are typically identifiable and documented; a total absence of KYC data on the receiving external account raises the risk that funds are exiting to an unverified or unmonitored destination [EXT-5000].
+5. The rapid timing (funds swept out just 7 hours after the last inbound, and the entire cluster-to-sweep cycle completing within roughly 40 hours) is consistent with both innocent daily cash consolidation and deliberate layering, so timing alone does not resolve the ambiguity.
+
+On balance, the objective structuring indicators (STR-1 through STR-4, all matched) plus the anomalous fee uniformity and lack of KYC on the destination account outweigh the plausible-but-unverified legitimate business narrative. This case should be escalated for further investigation, including verification of the underlying catering contract/invoices, confirmation of the customers' relationship to a purported shared event, and identification/KYC of EXT-5000, before a final determination is made.</div>
 </div>
 <footer>Static snapshot generated from live dataset — not connected to a running backend. See TEAM_BRIEFING.md for the full write-up.</footer>
 </body>

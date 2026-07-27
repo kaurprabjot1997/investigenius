@@ -1,0 +1,39 @@
+{
+  "content": {
+    "summary": "The case involves a single alerted transaction (TXN-0116) between two long-tenured individual retail accounts. Given the low graph risk score (10/100), no adverse KYC findings, and the small, one-off nature of the transfer, the pattern is consistent with a routine personal fund transfer rather than any illicit typology.",
+    "claims": [
+      {
+        "statement": "ACCT-2110 has a 23.7-year banking tenure with no adverse KYC notes, indicating an established, long-standing retail customer rather than a newly opened account typically associated with layering schemes.",
+        "citation_id": "ACCT-2110",
+        "typology": "none"
+      },
+      {
+        "statement": "ACCT-2111 similarly has no adverse KYC notes and is a 7-year tenured individual customer, consistent with a genuine personal account rather than a shell or mule account.",
+        "citation_id": "ACCT-2111",
+        "typology": "none"
+      },
+      {
+        "statement": "The single transaction TXN-0116 for $5,049.45 is a one-time transfer, not part of a structured or repetitive pattern (e.g., smurfing or layering), which would typically involve multiple smaller transactions across many accounts.",
+        "citation_id": "TXN-0116",
+        "typology": "none"
+      },
+      {
+        "statement": "Both accounts belong to individuals residing in CA with modest, similar income brackets ($20K-$40K), and one account holder (ACCT-2111) is a homemaker \u2014 a profile consistent with intra-family or personal support transfers (e.g., a spouse or relative sending household funds), which is a common innocent explanation for transfers between two personal accounts of similar demographic profile.",
+        "citation_id": "ACCT-2111",
+        "typology": "none"
+      },
+      {
+        "statement": "The alert was generated through routine monitoring for an 'elevated single transfer' rather than any suspicious-pattern-specific rule (e.g., structuring, rapid movement of funds, or high-risk jurisdiction flags), suggesting this is a standard threshold-based alert on an otherwise unremarkable transaction.",
+        "citation_id": "ALERT-0116",
+        "typology": "none"
+      },
+      {
+        "statement": "The overall network graph risk score of 10.0/100 is very low, indicating the transaction network shows minimal indicators of coordinated illicit activity such as fan-in/fan-out patterns, circular flows, or high-risk counterparties.",
+        "citation_id": "case_013",
+        "typology": "none"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}

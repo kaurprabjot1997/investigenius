@@ -1,0 +1,22 @@
+{
+  "content": {
+    "answer": "None of the three retrieved precedents actually deal with the near-threshold structuring pattern seen in case_001 (12 feeder accounts sending 92.5-98.5%-of-CTR-threshold transfers into a single hub account within a 33-hour window, followed by rapid consolidated outbound layering). \n\n- case_013 involves a single transaction between two long-tenured, related accounts at an amount consistent with income \u2014 a benign one-off pattern, not a multi-feeder near-threshold structuring pattern. Not analogous.\n- case_005 is a mule_hub fan-out (one account paying out to 20 counterparties) that was explained away as legitimate marketplace activity; it is a fan-out (one-to-many) rather than the fan-in (many-to-one near-CTR-threshold) pattern here, and the resolution hinged on marketplace/KYC corroboration that isn't present or analogous in this case.\n- case_007 is a round-tripping (circular flow) typology, evaluated against an entirely different playbook (RT-1 through RT-3), not the structuring (STR-1 through STR-4) checklist matched here.\n\nSo while case_001 fully matches all four structuring playbook criteria (STR-1 through STR-4) \u2014 near-threshold inbound clustering, tight time window, rapid consolidated outbound layering, and one-off feeder relationships \u2014 I do not have a precedent in the retrieved set that shows how a genuinely analogous near-threshold structuring case was previously resolved (e.g., escalated, filed as SAR, or dismissed with a legitimate explanation). I'd recommend treating this as a novel/unprecedented pattern for decision purposes and escalating based on the strength of the STR-1\u2013STR-4 match alone, rather than relying on the precedents above, since none of them address this typology or fact pattern directly. If you have a broader precedent set specifically tagged 'structuring,' it would be worth re-querying for those before finalizing a decision.",
+    "citations": [
+      {
+        "case_id": "case_013",
+        "note": "Only superficially similar (single transaction, related parties); not a near-threshold multi-feeder structuring case, so not a useful precedent for resolution."
+      },
+      {
+        "case_id": "case_005",
+        "note": "Different topology (fan-out mule hub, not fan-in near-CTR structuring) and different resolution rationale (marketplace legitimacy), not directly applicable."
+      },
+      {
+        "case_id": "case_007",
+        "note": "Different typology (round-tripping) evaluated under a different playbook (RT-1 to RT-3), not the structuring criteria matched in this case."
+      }
+    ],
+    "confidence": 0.3
+  },
+  "model": "claude-sonnet-5",
+  "source": "live"
+}
