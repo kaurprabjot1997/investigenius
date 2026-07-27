@@ -412,6 +412,35 @@
   .arch-node.adj { border-color: var(--gold-deep); }
   .arch-arrow { color: var(--muted); font-size: 0.8rem; }
 
+  /* ---------- panel 7: roadmap ---------- */
+  .roadmap-body {
+    position: absolute; inset: 13% 4% 13%;
+    display: flex; flex-direction: column; justify-content: center; gap: 20px;
+  }
+  .roadmap-label {
+    font-family: ui-monospace, monospace; font-size: 0.62rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 9px;
+  }
+  .roadmap-row {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 6px 4px; max-width: 860px; margin: 0 auto;
+  }
+  .roadmap-total {
+    text-align: center; font-family: ui-monospace, monospace; font-size: 0.7rem;
+    color: var(--gold-deep); margin-top: 8px; opacity: 0;
+  }
+  .js-anim.roadmap-total { animation: fadeUp 0.5s ease forwards; animation-delay: 1s; }
+  .future-row {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 7px; max-width: 780px; margin: 0 auto;
+  }
+  .future-chip {
+    font-family: ui-monospace, monospace; font-size: 0.66rem; color: var(--ink);
+    background: var(--card-bg); border: 1px solid var(--paper-line); border-radius: 20px;
+    padding: 5px 12px; opacity: 0;
+  }
+  .js-anim.future-chip { animation: fadeUp 0.4s ease forwards; }
+
   /* ---------- controls ---------- */
   .controls {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -577,6 +606,41 @@
       </section>
 
       <section class="panel" data-idx="7" aria-hidden="true">
+        <div class="stamp">PATH TO PRODUCTION</div>
+        <div class="roadmap-body">
+          <div>
+            <div class="roadmap-label">Proposed SDLC timeline — an estimate, not a committed schedule</div>
+            <div class="roadmap-row">
+              <div class="arch-node js-anim" style="animation-delay:.05s">Discovery &amp; Validation<span>4–6 wks</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node js-anim" style="animation-delay:.2s">Data Integration<span>6–10 wks</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node js-anim" style="animation-delay:.35s">Model Validation &amp; Red-Team<span>6–8 wks</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node js-anim" style="animation-delay:.5s">Security Hardening<span>4–6 wks</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node js-anim" style="animation-delay:.65s">Shadow-Mode Pilot<span>8–12 wks</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node js-anim" style="animation-delay:.8s">Phased Rollout<span>8–12 wks</span></div>
+            </div>
+            <div class="roadmap-total js-anim">≈ 6–9 months to a cautious first production pilot — this is compliance tooling, not a feature ship</div>
+          </div>
+          <div>
+            <div class="roadmap-label">Future improvements</div>
+            <div class="future-row">
+              <div class="future-chip js-anim" style="animation-delay:1.1s">Real auth &amp; session-based RBAC</div>
+              <div class="future-chip js-anim" style="animation-delay:1.18s">Enterprise-grade PII detection</div>
+              <div class="future-chip js-anim" style="animation-delay:1.26s">Live transaction-monitoring feed</div>
+              <div class="future-chip js-anim" style="animation-delay:1.34s">Feedback-tuned confidence thresholds</div>
+              <div class="future-chip js-anim" style="animation-delay:1.42s">Expanded typology coverage</div>
+              <div class="future-chip js-anim" style="animation-delay:1.5s">Direct SAR e-filing integration</div>
+            </div>
+          </div>
+        </div>
+        <div class="beat-line">The story doesn't end at the demo. This is what actually shipping it looks like.</div>
+      </section>
+
+      <section class="panel" data-idx="8" aria-hidden="true">
         <div class="close-card">
           <h2>Using agentic AI, we solved a real business problem.</h2>
           <p class="sub2">This is InvestiGenius.</p>
@@ -604,7 +668,7 @@
     <div class="controls">
       <button id="prevBtn" aria-label="Previous chapter">← Back</button>
       <div class="right">
-        <span class="count"><span id="curNum">1</span> / 8</span>
+        <span class="count"><span id="curNum">1</span> / 9</span>
         <button id="playBtn">▶ Auto-play</button>
       </div>
       <button id="nextBtn" aria-label="Next chapter">Next →</button>
@@ -615,7 +679,7 @@
 
 <script>
 (function () {
-  var LABELS = ["Cover", "Flood", "Cluster", "Case", "Argument", "Sign-off", "Ripple", "Close"];
+  var LABELS = ["Cover", "Flood", "Cluster", "Case", "Argument", "Sign-off", "Ripple", "Roadmap", "Close"];
   var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
   var tabsEl = document.getElementById("tabs");
   var current = 0;
