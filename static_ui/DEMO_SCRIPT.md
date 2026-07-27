@@ -14,7 +14,7 @@ Timed against the actual judging rubric so time spent maps to points available. 
 
 **Slide 1 — Title.**
 
-> "Every team in this room is going to pitch some version of 'GenAI reads an alert and scores it.' We're not doing that. We built a team of agentic AI investigators — InvestiGenius."
+> "Money laundering rarely lives in one suspicious transaction — it lives in a network of them. InvestiGenius is agentic AI that investigates the way a real team does: building a case, arguing it from both sides, and ruling on it, before a human ever has to start from a blank page."
 
 ## 0:15–0:40 — The problem, made specific *(Creativity — 30%)*
 
@@ -72,7 +72,7 @@ Timed against the actual judging rubric so time spent maps to points available. 
 
 **Slide 8 — Close.**
 
-> "Every other team in this room can put GenAI in front of an alert. We built agentic AI that argues both sides of a case, cites its evidence, defers to a human for the final call, and keeps working even without a live model connection — because that's what actually deploying this in a bank looks like. That's InvestiGenius."
+> "That's InvestiGenius: agentic AI that argues both sides of a case, cites its evidence, defers to a human for the final call, and keeps working even without a live model connection. Using agentic AI, we're solving a real business problem — not demoing a chatbot."
 
 ## 6:30–7:00 — Buffer
 

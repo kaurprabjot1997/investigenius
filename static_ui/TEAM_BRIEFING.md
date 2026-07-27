@@ -11,7 +11,7 @@ The AML Investigation & Triage team gets a high volume of alerts, spends most of
 
 ## 2. Why our approach is different from "GenAI reads an alert and scores it"
 
-Assume every other team pitches some version of "LLM scores each alert." That's the obvious reading of the brief, and it has a structural blind spot: real laundering schemes (structuring, round-tripping, mule networks) only become visible when you connect multiple accounts — scoring alerts one at a time can't see that.
+"LLM scores each alert" is the straightforward reading of the brief, and it has a structural blind spot: real laundering schemes (structuring, round-tripping, mule networks) only become visible when you connect multiple accounts — scoring alerts one at a time can't see that.
 
 **Our wedge: network-level triage, not alert-level triage.**
 
