@@ -616,38 +616,56 @@
 
   function scatterCards(container, mode) {
     container.innerHTML = "";
-    var traceSvg = mode === "cluster" ? document.getElementById("clusterTrace") : null;
-    if (traceSvg) traceSvg.innerHTML = "";
-    var count = mode === "flood" ? 30 : 20;
-    var clusters = [[18, 28], [46, 62], [74, 32], [88, 68], [30, 78]];
-    for (var i = 0; i < count; i++) {
-      var card = document.createElement("div");
-      var left = 6 + Math.random() * 82;
-      var top = mode === "flood" ? 30 + Math.random() * 56 : 8 + Math.random() * 74;
-      var rot = (Math.random() * 26 - 13).toFixed(1) + "deg";
-      var delay = mode === "flood"
-        ? (Math.random() * 1.6).toFixed(2) + "s"
-        : (0.5 + Math.random() * 0.9).toFixed(2) + "s";
-      card.className = "card " + (mode === "flood" ? "card-fall" : (i % 5 === 0 ? "card-stay" : "card-merge"));
-      card.style.left = left + "%";
-      card.style.top = top + "%";
-      card.style.setProperty("--rot", rot);
-      card.style.animationDelay = delay;
-      if (mode !== "flood") {
-        var c = clusters[i % clusters.length];
+
+    if (mode === "flood") {
+      for (var i = 0; i < 30; i++) {
+        var card = document.createElement("div");
+        var left = 6 + Math.random() * 82;
+        var top = 30 + Math.random() * 56;
+        card.className = "card card-fall";
+        card.style.left = left + "%";
+        card.style.top = top + "%";
+        card.style.setProperty("--rot", (Math.random() * 26 - 13).toFixed(1) + "deg");
+        card.style.animationDelay = (Math.random() * 1.6).toFixed(2) + "s";
+        container.appendChild(card);
+      }
+      return;
+    }
+
+    // Cluster mode: each card starts jittered *around its own destination*
+    // rather than fully random across the canvas, so the merge reads as
+    // several local groups forming in place instead of long trails crossing
+    // each other. Exactly one card per cluster is the "stay" (high-risk)
+    // survivor, appended last within its group so it paints on top of the
+    // faded ones it absorbed.
+    var traceSvg = document.getElementById("clusterTrace");
+    traceSvg.innerHTML = "";
+    var clusters = [[16, 28], [84, 28], [14, 74], [86, 74], [50, 84]];
+    var perCluster = 4;
+    clusters.forEach(function (c) {
+      for (var k = 0; k < perCluster; k++) {
+        var left = Math.max(4, Math.min(94, c[0] + (Math.random() - 0.5) * 26));
+        var top = Math.max(8, Math.min(88, c[1] + (Math.random() - 0.5) * 22));
+        var delay = (0.4 + Math.random() * 0.8).toFixed(2) + "s";
+        var isStay = k === perCluster - 1;
+        var card = document.createElement("div");
+        card.className = "card " + (isStay ? "card-stay" : "card-merge");
+        card.style.left = left + "%";
+        card.style.top = top + "%";
+        card.style.setProperty("--rot", (Math.random() * 20 - 10).toFixed(1) + "deg");
+        card.style.animationDelay = delay;
         card.style.setProperty("--tx", (c[0] - left) + "%");
         card.style.setProperty("--ty", (c[1] - top) + "%");
-        if (traceSvg) {
-          var ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          ln.setAttribute("x1", left.toFixed(1)); ln.setAttribute("y1", top.toFixed(1));
-          ln.setAttribute("x2", c[0]); ln.setAttribute("y2", c[1]);
-          ln.setAttribute("class", "trace-edge js-anim");
-          ln.style.animationDelay = delay;
-          traceSvg.appendChild(ln);
-        }
+        container.appendChild(card);
+
+        var ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        ln.setAttribute("x1", left.toFixed(1)); ln.setAttribute("y1", top.toFixed(1));
+        ln.setAttribute("x2", c[0]); ln.setAttribute("y2", c[1]);
+        ln.setAttribute("class", "trace-edge js-anim");
+        ln.style.animationDelay = delay;
+        traceSvg.appendChild(ln);
       }
-      container.appendChild(card);
-    }
+    });
   }
 
   function countStat(el, from, to, duration) {
